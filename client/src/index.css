@@ -90,6 +90,10 @@ button:active { transform: scale(.97); }
 .night-mode .dark-panel .hover\:bg-\[\#f2ebe3\]:hover { background-color: #2b3b44 !important; }
 .night-mode .bg-\[\#f7f3ee\] { background-color: #182126 !important; }
 .night-mode .bg-\[\#fbf8f4\] { background-color: #1d2a31 !important; }
+.night-mode .dark-card p, .night-mode .dark-card label, .night-mode .dark-card span, .night-mode .dark-card small { color: #d5e0dc !important; }
+.night-mode .dark-card input, .night-mode .dark-card textarea, .night-mode .dark-card select { color: #f7f0e8 !important; caret-color: #f7f0e8; }
+.night-mode .dark-card input::placeholder, .night-mode .dark-card textarea::placeholder { color: #9fb1ac !important; opacity: 1; }
+.night-mode .dark-card .text-\[\#26323a\], .night-mode .dark-card .text-\[\#4b423a\], .night-mode .dark-card .text-\[\#6f6256\], .night-mode .dark-card .text-\[\#8e8174\], .night-mode .dark-card .text-\[\#9a8e81\], .night-mode .dark-card .text-\[\#a49384\] { color: #d5e0dc !important; }
 
 @media (min-width: 640px) { .container { padding-left: 1.5rem; padding-right: 1.5rem; } }
 @media (min-width: 1024px) { .container { padding-left: 2rem; padding-right: 2rem; max-width: 1280px; } }
