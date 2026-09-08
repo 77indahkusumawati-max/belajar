@@ -146,6 +146,7 @@ const educationOptions = [
   "7 SMP",
   "8 SMP",
   "9 SMP",
+  "SMA/K",
   "SMA",
   "10 SMA",
   "11 SMA",
@@ -645,14 +646,16 @@ function OnboardingScreen({
   }) => void;
 }) {
   const [step, setStep] = useState(1);
-  const [className, setClassName] = useState("X SMA");
+  const [className, setClassName] = useState("SMA/K");
   const [subjects, setSubjects] = useState<string[]>(["Matematika"]);
   const [dailyTarget, setDailyTarget] = useState(15);
   const [reminderTime, setReminderTime] = useState("19:00");
   const options = educationOptions;
   const availableSubjects = [
     ...subjectOptions,
-    ...(className.includes("SMK") ? vocationalSubjects : []),
+    ...(className.includes("SMK") || className === "SMA/K"
+      ? vocationalSubjects
+      : []),
   ];
   const toggleSubject = (subject: string) =>
     setSubjects(current =>
