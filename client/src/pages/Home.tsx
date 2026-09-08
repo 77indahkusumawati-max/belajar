@@ -1603,15 +1603,46 @@ export default function Home() {
       subjects: {
         Matematika: [
           "Bilangan sampai 20",
-          "Penjumlahan sederhana",
+          "Penjumlahan dan pengurangan",
           "Bangun datar",
+          "Pola dan pengukuran",
         ],
         "Bahasa Indonesia": [
           "Huruf dan kalimat",
           "Menyimak cerita",
           "Menulis permulaan",
+          "Berbicara santun",
         ],
-        IPAS: ["Diriku dan keluarga", "Panca indera", "Lingkungan sekitar"],
+        "Pendidikan Pancasila": [
+          "Aku dan teman",
+          "Aturan di rumah dan sekolah",
+          "Gotong royong",
+          "Simbol Pancasila",
+        ],
+        IPAS: [
+          "Diriku dan keluarga",
+          "Panca indera",
+          "Lingkungan sekitar",
+          "Benda hidup dan tak hidup",
+        ],
+        Seni: [
+          "Garis dan warna",
+          "Bernyanyi",
+          "Gerak tari",
+          "Karya dari bahan sekitar",
+        ],
+        PJOK: [
+          "Gerak lokomotor",
+          "Keseimbangan tubuh",
+          "Permainan sederhana",
+          "Hidup bersih dan sehat",
+        ],
+        Agama: [
+          "Mengenal ciptaan Tuhan",
+          "Doa dan rasa syukur",
+          "Berbuat baik",
+          "Menjaga kebersihan",
+        ],
       },
     },
     "2 SD": {
@@ -1621,13 +1652,44 @@ export default function Home() {
           "Penjumlahan dan pengurangan",
           "Perkalian awal",
           "Waktu dan uang",
+          "Bangun datar dan pola",
         ],
         "Bahasa Indonesia": [
           "Membaca pemahaman",
           "Kalimat tanya",
           "Menulis pengalaman",
+          "Pesan dan petunjuk",
         ],
-        IPAS: ["Makhluk hidup", "Benda dan sifatnya", "Lingkungan sehat"],
+        "Pendidikan Pancasila": [
+          "Identitas diri",
+          "Hak dan kewajiban",
+          "Keragaman keluarga",
+          "Musyawarah sederhana",
+        ],
+        IPAS: [
+          "Makhluk hidup",
+          "Benda dan sifatnya",
+          "Lingkungan sehat",
+          "Cuaca dan musim",
+        ],
+        Seni: [
+          "Kolase dan tekstur",
+          "Notasi sederhana",
+          "Gerak tari daerah",
+          "Drama pendek",
+        ],
+        PJOK: [
+          "Variasi jalan dan lari",
+          "Permainan bola",
+          "Senam dasar",
+          "Makanan sehat",
+        ],
+        Agama: [
+          "Kisah teladan",
+          "Ibadah dan disiplin",
+          "Kasih sayang",
+          "Jujur dan amanah",
+        ],
       },
     },
     "3 SD": {
@@ -1637,42 +1699,360 @@ export default function Home() {
           "Perkalian dan pembagian",
           "Pecahan sederhana",
           "Pengukuran",
+          "Keliling dan luas",
         ],
-        "Bahasa Indonesia": ["Teks informasi", "Ide pokok", "Ringkasan"],
-        IPAS: ["Siklus hidup", "Energi", "Perubahan cuaca"],
+        "Bahasa Indonesia": [
+          "Teks informasi",
+          "Ide pokok",
+          "Ringkasan",
+          "Wawancara sederhana",
+        ],
+        "Pendidikan Pancasila": [
+          "Makna sila Pancasila",
+          "Aturan bersama",
+          "Keberagaman budaya",
+          "Kerja sama",
+        ],
+        IPAS: ["Siklus hidup", "Energi", "Perubahan cuaca", "Kenampakan alam"],
+        Seni: [
+          "Motif dekoratif",
+          "Tangga nada",
+          "Tari kreasi",
+          "Bermain peran",
+        ],
+        PJOK: [
+          "Kombinasi gerak",
+          "Permainan bola kecil",
+          "Aktivitas kebugaran",
+          "Keselamatan di air",
+        ],
+        Agama: [
+          "Kitab dan ajaran",
+          "Ibadah bersama",
+          "Tolong-menolong",
+          "Tanggung jawab",
+        ],
       },
     },
     "4 SD": {
       title: "Berpikir kritis dan memahami konsep",
       subjects: {
-        Matematika: ["Pecahan dan desimal", "Bangun datar", "Pengukuran sudut"],
-        "Bahasa Indonesia": ["Ide pokok", "Wawancara", "Teks petunjuk"],
-        IPAS: ["Gaya dan energi", "Tumbuhan", "Keragaman budaya"],
+        Matematika: [
+          "Pecahan dan desimal",
+          "Bangun datar",
+          "Pengukuran sudut",
+          "Statistika sederhana",
+        ],
+        "Bahasa Indonesia": [
+          "Ide pokok",
+          "Wawancara",
+          "Teks petunjuk",
+          "Cerita rakyat",
+        ],
+        "Pendidikan Pancasila": [
+          "Makna setiap sila",
+          "Norma dan aturan",
+          "Hak dan kewajiban",
+          "Persatuan dalam keberagaman",
+        ],
+        IPAS: ["Gaya dan energi", "Tumbuhan", "Keragaman budaya", "Siklus air"],
+        Seni: [
+          "Karya dua dimensi",
+          "Bunyi dan ritme",
+          "Tari tradisional",
+          "Teater sederhana",
+        ],
+        PJOK: [
+          "Permainan bola besar",
+          "Atletik dasar",
+          "Senam lantai",
+          "Kebugaran jasmani",
+        ],
+        Agama: [
+          "Mengenal kitab suci",
+          "Ibadah utama",
+          "Akhlak terpuji",
+          "Hidup rukun",
+        ],
       },
     },
     "5 SD": {
       title: "Penerapan konsep dalam kehidupan",
       subjects: {
-        Matematika: ["KPK dan FPB", "Volume", "Kecepatan"],
-        "Bahasa Indonesia": ["Teks eksplanasi", "Iklan dan poster", "Pidato"],
-        IPAS: ["Ekosistem", "Siklus air", "Organ tubuh"],
+        Matematika: [
+          "KPK dan FPB",
+          "Volume",
+          "Kecepatan",
+          "Pecahan dan persen",
+        ],
+        "Bahasa Indonesia": [
+          "Teks eksplanasi",
+          "Iklan dan poster",
+          "Pidato",
+          "Surat undangan",
+        ],
+        "Pendidikan Pancasila": [
+          "Nilai Pancasila",
+          "Keputusan bersama",
+          "Persatuan Indonesia",
+          "Gotong royong di masyarakat",
+        ],
+        IPAS: ["Ekosistem", "Siklus air", "Organ tubuh", "Sejarah Indonesia"],
+        Seni: [
+          "Perspektif dan proporsi",
+          "Lagu daerah",
+          "Pola lantai tari",
+          "Pameran karya",
+        ],
+        PJOK: [
+          "Permainan bola",
+          "Lari dan lompat",
+          "Pencak silat dasar",
+          "Pola hidup sehat",
+        ],
+        Agama: [
+          "Tokoh teladan",
+          "Hidup sederhana",
+          "Menjaga lingkungan",
+          "Toleransi",
+        ],
       },
     },
     "6 SD": {
       title: "Persiapan jenjang SMP",
       subjects: {
-        Matematika: ["Operasi bilangan", "Data dan diagram", "Bangun ruang"],
-        "Bahasa Indonesia": ["Laporan", "Pidato", "Literasi informasi"],
-        IPAS: ["Tata surya", "Energi", "Adaptasi makhluk hidup"],
+        Matematika: [
+          "Operasi bilangan",
+          "Data dan diagram",
+          "Bangun ruang",
+          "Perbandingan dan skala",
+        ],
+        "Bahasa Indonesia": [
+          "Laporan",
+          "Pidato",
+          "Literasi informasi",
+          "Formulir dan surat resmi",
+        ],
+        "Pendidikan Pancasila": [
+          "Pancasila sebagai pandangan hidup",
+          "Bhinneka Tunggal Ika",
+          "Demokrasi sederhana",
+          "Menjadi warga bertanggung jawab",
+        ],
+        IPAS: [
+          "Tata surya",
+          "Energi",
+          "Adaptasi makhluk hidup",
+          "Globalisasi dan teknologi",
+        ],
+        Seni: [
+          "Poster dan komik",
+          "Ansambel musik",
+          "Kreasi tari",
+          "Pementasan drama",
+        ],
+        PJOK: [
+          "Strategi permainan",
+          "Atletik",
+          "Senam irama",
+          "Pertolongan pertama",
+        ],
+        Agama: [
+          "Kedewasaan beragama",
+          "Kejujuran dan tanggung jawab",
+          "Keadilan",
+          "Persiapan remaja",
+        ],
       },
     },
-    SMP: {
-      title: "Fondasi sains, bahasa, dan matematika",
+    "7 SMP": {
+      title: "Adaptasi belajar dan fondasi ilmu pengetahuan",
       subjects: {
-        Matematika: ["Aljabar dan persamaan", "Perbandingan", "Geometri"],
-        "Bahasa Indonesia": ["Teks narasi", "Teks eksplanasi", "Teks prosedur"],
-        IPA: ["Zat dan perubahan", "Energi", "Sistem kehidupan"],
-        IPS: ["Interaksi sosial", "Peta dan geografi", "Kegiatan ekonomi"],
+        Matematika: [
+          "Bilangan dan himpunan",
+          "Aljabar",
+          "Persamaan linear",
+          "Perbandingan",
+        ],
+        "Bahasa Indonesia": [
+          "Teks deskripsi",
+          "Teks prosedur",
+          "Teks laporan",
+          "Puisi rakyat",
+        ],
+        "Bahasa Inggris": [
+          "Introduction",
+          "Descriptive text",
+          "Daily activities",
+          "Announcement",
+        ],
+        IPA: [
+          "Objek IPA dan pengukuran",
+          "Klasifikasi makhluk hidup",
+          "Zat dan perubahan",
+          "Suhu dan kalor",
+        ],
+        IPS: [
+          "Interaksi sosial",
+          "Peta dan kondisi geografis",
+          "Aktivitas ekonomi",
+          "Masyarakat Indonesia",
+        ],
+        Informatika: [
+          "Berpikir komputasional",
+          "Sistem komputer",
+          "Jaringan internet",
+          "Etika digital",
+        ],
+        "Pendidikan Pancasila": [
+          "Sejarah kelahiran Pancasila",
+          "Norma dan keadilan",
+          "UUD 1945",
+          "Keberagaman Indonesia",
+        ],
+        "Seni Budaya": [
+          "Menggambar flora dan fauna",
+          "Musik daerah",
+          "Tari kreasi",
+          "Teater",
+        ],
+        PJOK: ["Permainan bola", "Atletik", "Senam", "Kebugaran jasmani"],
+        Agama: [
+          "Kitab dan ibadah",
+          "Akhlak",
+          "Toleransi",
+          "Tanggung jawab remaja",
+        ],
+      },
+    },
+    "8 SMP": {
+      title: "Penguatan konsep dan kemampuan bernalar",
+      subjects: {
+        Matematika: [
+          "Pola bilangan",
+          "Koordinat Kartesius",
+          "Relasi dan fungsi",
+          "Teorema Pythagoras",
+        ],
+        "Bahasa Indonesia": [
+          "Teks berita",
+          "Iklan dan slogan",
+          "Eksposisi",
+          "Drama",
+        ],
+        "Bahasa Inggris": [
+          "Recount text",
+          "Expression of opinion",
+          "Invitation",
+          "Comparison",
+        ],
+        IPA: [
+          "Gerak dan gaya",
+          "Sistem pencernaan",
+          "Tekanan",
+          "Getaran dan gelombang",
+        ],
+        IPS: [
+          "ASEAN",
+          "Mobilitas sosial",
+          "Pluralitas masyarakat",
+          "Perdagangan antardaerah",
+        ],
+        Informatika: [
+          "Analisis data",
+          "Algoritma",
+          "Pemrograman blok",
+          "Dampak sosial informatika",
+        ],
+        "Pendidikan Pancasila": [
+          "Kedudukan Pancasila",
+          "Konstitusi",
+          "Peraturan perundangan",
+          "Semangat kebangkitan nasional",
+        ],
+        "Seni Budaya": [
+          "Menggambar model",
+          "Ansambel musik",
+          "Tari tradisional",
+          "Pameran seni",
+        ],
+        PJOK: [
+          "Permainan bola besar",
+          "Bela diri",
+          "Aktivitas ritmik",
+          "Pencegahan pergaulan berisiko",
+        ],
+        Agama: [
+          "Teladan tokoh agama",
+          "Ibadah dan muamalah",
+          "Menjaga kehormatan",
+          "Kerukunan",
+        ],
+      },
+    },
+    "9 SMP": {
+      title: "Persiapan jenjang SMA/K dan masa depan",
+      subjects: {
+        Matematika: [
+          "Perpangkatan dan bentuk akar",
+          "Persamaan kuadrat",
+          "Transformasi geometri",
+          "Statistika dan peluang",
+        ],
+        "Bahasa Indonesia": [
+          "Teks diskusi",
+          "Cerita inspiratif",
+          "Pidato persuasif",
+          "Karya ilmiah sederhana",
+        ],
+        "Bahasa Inggris": [
+          "Narrative text",
+          "Report text",
+          "Procedure and tips",
+          "Job and study plan",
+        ],
+        IPA: [
+          "Reproduksi manusia",
+          "Pewarisan sifat",
+          "Listrik dan kemagnetan",
+          "Bioteknologi",
+        ],
+        IPS: [
+          "Ekonomi kreatif",
+          "Perubahan sosial",
+          "Perdagangan internasional",
+          "Sejarah kemerdekaan",
+        ],
+        Informatika: [
+          "Proyek aplikasi sederhana",
+          "Keamanan data",
+          "Analisis informasi",
+          "Karier di bidang teknologi",
+        ],
+        "Pendidikan Pancasila": [
+          "Dinamika Pancasila",
+          "Hak dan kewajiban warga",
+          "Bela negara",
+          "Kebebasan berpendapat",
+        ],
+        "Seni Budaya": [
+          "Pameran dan kritik seni",
+          "Kreasi musik",
+          "Koreografi",
+          "Pementasan",
+        ],
+        PJOK: [
+          "Strategi permainan",
+          "Atletik lanjutan",
+          "Kebugaran untuk kesehatan",
+          "Pertolongan cedera",
+        ],
+        Agama: [
+          "Kedewasaan dan pilihan hidup",
+          "Keadilan sosial",
+          "Moderasi beragama",
+          "Mempersiapkan masa depan",
+        ],
       },
     },
     "10 SMA": {
@@ -3738,7 +4118,9 @@ export default function Home() {
                 <option value="4 SD">Kelas 4 SD</option>
                 <option value="5 SD">Kelas 5 SD</option>
                 <option value="6 SD">Kelas 6 SD</option>
-                <option value="SMP">SMP</option>
+                <option value="7 SMP">Kelas 7 SMP</option>
+                <option value="8 SMP">Kelas 8 SMP</option>
+                <option value="9 SMP">Kelas 9 SMP</option>
                 <option value="10 SMA">Kelas 10 SMA</option>
                 <option value="11 SMA">Kelas 11 SMA</option>
                 <option value="12 SMA">Kelas 12 SMA</option>
