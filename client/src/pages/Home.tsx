@@ -1,16 +1,61 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
-  Award, BarChart3, Bell, BookOpen, Bookmark, CalendarDays, Check, CheckCircle2,
-  ChevronRight, CircleHelp, Clock3, Flame, GraduationCap, LayoutDashboard, Library,
-  Lightbulb, ListTodo, LogIn, LogOut, Menu, Moon, MoreHorizontal, Pencil, Play,
-  Plus, Search, Settings, ShieldCheck, Sparkles, Star, Sun, Target, Trophy, UserRound, Mic, MicOff,
-  Users, X, Zap, Volume2, VolumeX, Share2, History,
+  Award,
+  BarChart3,
+  Bell,
+  BookOpen,
+  Bookmark,
+  CalendarDays,
+  Check,
+  CheckCircle2,
+  ChevronRight,
+  CircleHelp,
+  Clock3,
+  Flame,
+  GraduationCap,
+  LayoutDashboard,
+  Library,
+  Lightbulb,
+  ListTodo,
+  LogIn,
+  LogOut,
+  Menu,
+  Moon,
+  MoreHorizontal,
+  Pencil,
+  Play,
+  Plus,
+  Search,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  Sun,
+  Target,
+  Trophy,
+  UserRound,
+  Mic,
+  MicOff,
+  Users,
+  X,
+  Zap,
+  Volume2,
+  VolumeX,
+  Share2,
+  History,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import AiLearningRoom from "@/components/AiLearningRoom";
 
@@ -18,10 +63,39 @@ const heroImage = "/assets/belajar-hero.webp";
 const femaleHero = "/assets/belajar-hero-female.webp";
 const cardsImage = "/assets/study-cards.webp";
 
-type Page = "Beranda" | "Materi" | "Kuis" | "Kalender" | "Analitik" | "Progres" | "Leaderboard" | "Sertifikat" | "Pencapaian" | "AI Belajar";
-type User = { name: string; email: string; password: string; joinedAt: string; character?: "male" | "female" };
-type QuizQuestion = { question: string; options: string[]; answer: number; explanation: string; source: string };
-type AiHistoryItem = { id: string; kind: "Ringkasan" | "Kuis" | "Jawaban"; topic: string; prompt: string; answer: string; createdAt: string };
+type Page =
+  | "Beranda"
+  | "Materi"
+  | "Kuis"
+  | "Kalender"
+  | "Analitik"
+  | "Progres"
+  | "Leaderboard"
+  | "Sertifikat"
+  | "Pencapaian"
+  | "AI Belajar";
+type User = {
+  name: string;
+  email: string;
+  password: string;
+  joinedAt: string;
+  character?: "male" | "female";
+};
+type QuizQuestion = {
+  question: string;
+  options: string[];
+  answer: number;
+  explanation: string;
+  source: string;
+};
+type AiHistoryItem = {
+  id: string;
+  kind: "Ringkasan" | "Kuis" | "Jawaban";
+  topic: string;
+  prompt: string;
+  answer: string;
+  createdAt: string;
+};
 
 const navItems: { label: Page; icon: typeof LayoutDashboard }[] = [
   { label: "Beranda", icon: LayoutDashboard },
@@ -32,29 +106,201 @@ const navItems: { label: Page; icon: typeof LayoutDashboard }[] = [
   { label: "Pencapaian", icon: Trophy },
 ];
 
-const subjectOptions = ["Matematika", "Bahasa Indonesia", "Bahasa Inggris", "IPA", "IPS", "Biologi", "Fisika", "Kimia", "Sejarah", "Geografi", "Ekonomi", "Informatika", "Seni Budaya", "Pendidikan Jasmani", "Agama", "Bahasa Jepang"];
-const vocationalSubjects = ["Dasar-dasar Kejuruan", "Teknik Komputer dan Jaringan", "Rekayasa Perangkat Lunak", "Akuntansi dan Keuangan", "Manajemen Perkantoran", "Tata Busana", "Kuliner", "Teknik Kendaraan Ringan"];
-const educationOptions = ["TK A", "TK B", "1 SD", "2 SD", "3 SD", "4 SD", "5 SD", "6 SD", "7 SMP", "8 SMP", "9 SMP", "SMA", "10 SMA", "11 SMA", "12 SMA", "SMK", "10 SMK", "11 SMK", "12 SMK"];
+const subjectOptions = [
+  "Matematika",
+  "Bahasa Indonesia",
+  "Bahasa Inggris",
+  "IPA",
+  "IPS",
+  "Biologi",
+  "Fisika",
+  "Kimia",
+  "Sejarah",
+  "Geografi",
+  "Ekonomi",
+  "Informatika",
+  "Seni Budaya",
+  "Pendidikan Jasmani",
+  "Agama",
+  "Bahasa Jepang",
+];
+const vocationalSubjects = [
+  "Dasar-dasar Kejuruan",
+  "Teknik Komputer dan Jaringan",
+  "Rekayasa Perangkat Lunak",
+  "Akuntansi dan Keuangan",
+  "Manajemen Perkantoran",
+  "Tata Busana",
+  "Kuliner",
+  "Teknik Kendaraan Ringan",
+];
+const educationOptions = [
+  "TK A",
+  "TK B",
+  "1 SD",
+  "2 SD",
+  "3 SD",
+  "4 SD",
+  "5 SD",
+  "6 SD",
+  "7 SMP",
+  "8 SMP",
+  "9 SMP",
+  "SMA",
+  "10 SMA",
+  "11 SMA",
+  "12 SMA",
+  "SMK",
+  "10 SMK",
+  "11 SMK",
+  "12 SMK",
+];
 
 const materials = [
-  { id: "spldv", subject: "Matematika", title: "Persamaan Linear Dua Variabel", description: "Pahami konsep dasar, grafik, dan cara menyelesaikan SPLDV secara bertahap.", level: "Menengah", duration: "18 menit", progress: 68, color: "orange", icon: "∑" },
-  { id: "napas", subject: "Biologi", title: "Sistem Pernapasan Manusia", description: "Ringkasan organ, mekanisme inspirasi, dan gangguan pernapasan.", level: "Dasar", duration: "12 menit", progress: 24, color: "teal", icon: "◌" },
-  { id: "descriptive", subject: "Bahasa Inggris", title: "Descriptive Text", description: "Temukan struktur teks dan gunakan adjectives untuk mendeskripsikan objek.", level: "Dasar", duration: "15 menit", progress: 0, color: "mustard", icon: "Aa" },
-  { id: "pergerakan", subject: "Sejarah Indonesia", title: "Pergerakan Nasional", description: "Kenali organisasi, tokoh, dan alur peristiwa menuju kemerdekaan.", level: "Menengah", duration: "21 menit", progress: 42, color: "plum", icon: "✦" },
+  {
+    id: "spldv",
+    subject: "Matematika",
+    title: "Persamaan Linear Dua Variabel",
+    description:
+      "Pahami konsep dasar, grafik, dan cara menyelesaikan SPLDV secara bertahap.",
+    level: "Menengah",
+    duration: "18 menit",
+    progress: 68,
+    color: "orange",
+    icon: "∑",
+  },
+  {
+    id: "napas",
+    subject: "Biologi",
+    title: "Sistem Pernapasan Manusia",
+    description:
+      "Ringkasan organ, mekanisme inspirasi, dan gangguan pernapasan.",
+    level: "Dasar",
+    duration: "12 menit",
+    progress: 24,
+    color: "teal",
+    icon: "◌",
+  },
+  {
+    id: "descriptive",
+    subject: "Bahasa Inggris",
+    title: "Descriptive Text",
+    description:
+      "Temukan struktur teks dan gunakan adjectives untuk mendeskripsikan objek.",
+    level: "Dasar",
+    duration: "15 menit",
+    progress: 0,
+    color: "mustard",
+    icon: "Aa",
+  },
+  {
+    id: "pergerakan",
+    subject: "Sejarah Indonesia",
+    title: "Pergerakan Nasional",
+    description:
+      "Kenali organisasi, tokoh, dan alur peristiwa menuju kemerdekaan.",
+    level: "Menengah",
+    duration: "21 menit",
+    progress: 42,
+    color: "plum",
+    icon: "✦",
+  },
 ];
 
 const vocationalMaterials = [
-  { id: "rpl-web", subject: "Rekayasa Perangkat Lunak", title: "Dasar-Dasar Web untuk RPL", description: "Kenali HTML, CSS, dan JavaScript dengan proyek halaman profil sederhana.", level: "Dasar", duration: "25 menit", progress: 0, color: "teal", icon: "</>" },
-  { id: "rpl-algorithm", subject: "Rekayasa Perangkat Lunak", title: "Algoritma dan Flowchart", description: "Latih cara memecah masalah menjadi langkah logis sebelum menulis kode.", level: "Menengah", duration: "20 menit", progress: 0, color: "plum", icon: "↯" },
-  { id: "tkj-network", subject: "Teknik Komputer dan Jaringan", title: "Dasar Jaringan Komputer", description: "Pahami LAN, IP address, router, dan cara kerja koneksi antarperangkat.", level: "Dasar", duration: "22 menit", progress: 0, color: "orange", icon: "⌁" },
-  { id: "tkj-ip", subject: "Teknik Komputer dan Jaringan", title: "IP Address dan Subnet", description: "Berlatih mengenali IPv4, subnet mask, dan pembagian jaringan sederhana.", level: "Menengah", duration: "28 menit", progress: 0, color: "mustard", icon: "#" },
+  {
+    id: "rpl-web",
+    subject: "Rekayasa Perangkat Lunak",
+    title: "Dasar-Dasar Web untuk RPL",
+    description:
+      "Kenali HTML, CSS, dan JavaScript dengan proyek halaman profil sederhana.",
+    level: "Dasar",
+    duration: "25 menit",
+    progress: 0,
+    color: "teal",
+    icon: "</>",
+  },
+  {
+    id: "rpl-algorithm",
+    subject: "Rekayasa Perangkat Lunak",
+    title: "Algoritma dan Flowchart",
+    description:
+      "Latih cara memecah masalah menjadi langkah logis sebelum menulis kode.",
+    level: "Menengah",
+    duration: "20 menit",
+    progress: 0,
+    color: "plum",
+    icon: "↯",
+  },
+  {
+    id: "tkj-network",
+    subject: "Teknik Komputer dan Jaringan",
+    title: "Dasar Jaringan Komputer",
+    description:
+      "Pahami LAN, IP address, router, dan cara kerja koneksi antarperangkat.",
+    level: "Dasar",
+    duration: "22 menit",
+    progress: 0,
+    color: "orange",
+    icon: "⌁",
+  },
+  {
+    id: "tkj-ip",
+    subject: "Teknik Komputer dan Jaringan",
+    title: "IP Address dan Subnet",
+    description:
+      "Berlatih mengenali IPv4, subnet mask, dan pembagian jaringan sederhana.",
+    level: "Menengah",
+    duration: "28 menit",
+    progress: 0,
+    color: "mustard",
+    icon: "#",
+  },
 ];
 
 const quizQuestions: QuizQuestion[] = [
-  { question: "Manakah yang merupakan bentuk umum persamaan linear dua variabel?", options: ["ax² + bx + c = 0", "ax + by = c", "a/b = c/d", "y = ax²"], answer: 1, explanation: "Bentuk umum SPLDV adalah ax + by = c, dengan x dan y sebagai variabel.", source: "Materi: Persamaan Linear Dua Variabel · Bagian 1" },
-  { question: "Jika x + y = 10 dan x = 4, berapa nilai y?", options: ["4", "5", "6", "14"], answer: 2, explanation: "Substitusikan x = 4: 4 + y = 10, sehingga y = 6.", source: "Materi: Persamaan Linear Dua Variabel · Bagian 2" },
-  { question: "Titik potong dua garis pada grafik SPLDV menunjukkan…", options: ["Tidak ada solusi", "Nilai maksimum", "Himpunan penyelesaian", "Gradien garis"], answer: 2, explanation: "Titik potong dua garis adalah pasangan (x, y) yang memenuhi kedua persamaan.", source: "Materi: Persamaan Linear Dua Variabel · Bagian 3" },
-  { question: "Metode yang dapat digunakan untuk menyelesaikan SPLDV adalah…", options: ["Eliminasi dan substitusi", "Derivasi dan integral", "Fotosintesis", "Klasifikasi makhluk hidup"], answer: 0, explanation: "Eliminasi dan substitusi adalah dua metode dasar untuk menemukan nilai variabel pada SPLDV.", source: "Materi: Persamaan Linear Dua Variabel · Bagian 4" },
+  {
+    question:
+      "Manakah yang merupakan bentuk umum persamaan linear dua variabel?",
+    options: ["ax² + bx + c = 0", "ax + by = c", "a/b = c/d", "y = ax²"],
+    answer: 1,
+    explanation:
+      "Bentuk umum SPLDV adalah ax + by = c, dengan x dan y sebagai variabel.",
+    source: "Materi: Persamaan Linear Dua Variabel · Bagian 1",
+  },
+  {
+    question: "Jika x + y = 10 dan x = 4, berapa nilai y?",
+    options: ["4", "5", "6", "14"],
+    answer: 2,
+    explanation: "Substitusikan x = 4: 4 + y = 10, sehingga y = 6.",
+    source: "Materi: Persamaan Linear Dua Variabel · Bagian 2",
+  },
+  {
+    question: "Titik potong dua garis pada grafik SPLDV menunjukkan…",
+    options: [
+      "Tidak ada solusi",
+      "Nilai maksimum",
+      "Himpunan penyelesaian",
+      "Gradien garis",
+    ],
+    answer: 2,
+    explanation:
+      "Titik potong dua garis adalah pasangan (x, y) yang memenuhi kedua persamaan.",
+    source: "Materi: Persamaan Linear Dua Variabel · Bagian 3",
+  },
+  {
+    question: "Metode yang dapat digunakan untuk menyelesaikan SPLDV adalah…",
+    options: [
+      "Eliminasi dan substitusi",
+      "Derivasi dan integral",
+      "Fotosintesis",
+      "Klasifikasi makhluk hidup",
+    ],
+    answer: 0,
+    explanation:
+      "Eliminasi dan substitusi adalah dua metode dasar untuk menemukan nilai variabel pada SPLDV.",
+    source: "Materi: Persamaan Linear Dua Variabel · Bagian 4",
+  },
 ];
 
 const colorMap: Record<string, { bg: string; ink: string; bar: string }> = {
@@ -64,17 +310,131 @@ const colorMap: Record<string, { bg: string; ink: string; bar: string }> = {
   plum: { bg: "bg-[#ded4dc]", ink: "text-[#765a73]", bar: "bg-[#9b7892]" },
 };
 
-function ProgressBar({ value, color = "bg-[#e97848]" }: { value: number; color?: string }) {
-  return <div className="h-2 w-full overflow-hidden rounded-full bg-[#ebe5dc] dark-track"><div className={`h-full rounded-full ${color} transition-all duration-500`} style={{ width: `${value}%` }} /></div>;
+function ProgressBar({
+  value,
+  color = "bg-[#e97848]",
+}: {
+  value: number;
+  color?: string;
+}) {
+  return (
+    <div className="h-2 w-full overflow-hidden rounded-full bg-[#ebe5dc] dark-track">
+      <div
+        className={`h-full rounded-full ${color} transition-all duration-500`}
+        style={{ width: `${value}%` }}
+      />
+    </div>
+  );
 }
 
-function SectionHeading({ eyebrow, title, action, onAction }: { eyebrow?: string; title: string; action?: string; onAction?: () => void }) {
-  return <div className="mb-5 flex items-end justify-between gap-4"><div>{eyebrow && <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">{eyebrow}</p>}<h2 className="font-display text-[26px] leading-none tracking-[-0.035em] text-[#26323a]">{title}</h2></div>{action && <Button variant="ghost" className="h-auto gap-1 rounded-full px-2 py-1 text-xs font-bold text-[#b75c39] hover:bg-[#f3e9df]" onClick={onAction}>{action}<ChevronRight size={14} /></Button>}</div>;
+function SectionHeading({
+  eyebrow,
+  title,
+  action,
+  onAction,
+}: {
+  eyebrow?: string;
+  title: string;
+  action?: string;
+  onAction?: () => void;
+}) {
+  return (
+    <div className="mb-5 flex items-end justify-between gap-4">
+      <div>
+        {eyebrow && (
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">
+            {eyebrow}
+          </p>
+        )}
+        <h2 className="font-display text-[26px] leading-none tracking-[-0.035em] text-[#26323a]">
+          {title}
+        </h2>
+      </div>
+      {action && (
+        <Button
+          variant="ghost"
+          className="h-auto gap-1 rounded-full px-2 py-1 text-xs font-bold text-[#b75c39] hover:bg-[#f3e9df]"
+          onClick={onAction}
+        >
+          {action}
+          <ChevronRight size={14} />
+        </Button>
+      )}
+    </div>
+  );
 }
 
-function MaterialCard({ material, onOpen, saved, onSave }: { material: typeof materials[number]; onOpen: () => void; saved: boolean; onSave: () => void }) {
+function MaterialCard({
+  material,
+  onOpen,
+  saved,
+  onSave,
+}: {
+  material: (typeof materials)[number];
+  onOpen: () => void;
+  saved: boolean;
+  onSave: () => void;
+}) {
   const style = colorMap[material.color];
-  return <article className="group rounded-[22px] border border-[#e7ded4] bg-[#fffdf9] p-4 shadow-[0_8px_26px_rgba(61,48,35,0.035)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_14px_34px_rgba(61,48,35,0.09)] dark-card"><div className={`relative mb-4 flex h-[118px] items-center justify-center overflow-hidden rounded-[16px] ${style.bg}`}><div className="absolute inset-0 opacity-15" style={{ backgroundImage: `url(${cardsImage})`, backgroundSize: "cover" }} /><div className={`relative flex h-16 w-16 rotate-[-6deg] items-center justify-center rounded-[18px] border-2 border-current bg-[#fff9ef]/80 font-display text-[30px] font-bold shadow-[4px_5px_0_rgba(38,50,58,0.13)] ${style.ink}`}>{material.icon}</div><button aria-label={saved ? "Hapus tersimpan" : "Simpan materi"} className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-[#fffaf1]/80 text-[#8c7d6e] backdrop-blur hover:text-[#a94f2d]" onClick={onSave}><Bookmark size={15} fill={saved ? "currentColor" : "none"} /></button><span className="absolute bottom-3 left-3 rounded-full bg-[#fffaf1]/85 px-2.5 py-1 text-[10px] font-bold text-[#675d53]">{material.level}</span></div><div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#a49384]"><span className={`h-1.5 w-1.5 rounded-full ${style.bar}`} />{material.subject}</div><h3 className="mt-2 min-h-[42px] font-display text-[18px] leading-[1.05] tracking-[-0.02em] text-[#26323a]">{material.title}</h3><p className="mt-2 line-clamp-2 min-h-[34px] text-xs leading-relaxed text-[#8e8174]">{material.description}</p><div className="mt-4 flex items-center justify-between text-[11px] font-semibold text-[#9b8f82]"><span className="flex items-center gap-1"><Clock3 size={13} />{material.duration}</span><span>{material.progress ? `${material.progress}% selesai` : "Belum mulai"}</span></div><div className="mt-2"><ProgressBar value={material.progress} color={style.bar} /></div><Button className="mt-4 h-9 w-full rounded-xl bg-[#26323a] text-xs font-bold text-[#fffaf1] shadow-none hover:bg-[#3b4b55]" onClick={onOpen}>{material.progress ? "Lanjutkan" : "Mulai belajar"}<ChevronRight size={15} /></Button></article>;
+  return (
+    <article className="group rounded-[22px] border border-[#e7ded4] bg-[#fffdf9] p-4 shadow-[0_8px_26px_rgba(61,48,35,0.035)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_14px_34px_rgba(61,48,35,0.09)] dark-card">
+      <div
+        className={`relative mb-4 flex h-[118px] items-center justify-center overflow-hidden rounded-[16px] ${style.bg}`}
+      >
+        <div
+          className="absolute inset-0 opacity-15"
+          style={{
+            backgroundImage: `url(${cardsImage})`,
+            backgroundSize: "cover",
+          }}
+        />
+        <div
+          className={`relative flex h-16 w-16 rotate-[-6deg] items-center justify-center rounded-[18px] border-2 border-current bg-[#fff9ef]/80 font-display text-[30px] font-bold shadow-[4px_5px_0_rgba(38,50,58,0.13)] ${style.ink}`}
+        >
+          {material.icon}
+        </div>
+        <button
+          aria-label={saved ? "Hapus tersimpan" : "Simpan materi"}
+          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-[#fffaf1]/80 text-[#8c7d6e] backdrop-blur hover:text-[#a94f2d]"
+          onClick={onSave}
+        >
+          <Bookmark size={15} fill={saved ? "currentColor" : "none"} />
+        </button>
+        <span className="absolute bottom-3 left-3 rounded-full bg-[#fffaf1]/85 px-2.5 py-1 text-[10px] font-bold text-[#675d53]">
+          {material.level}
+        </span>
+      </div>
+      <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#a49384]">
+        <span className={`h-1.5 w-1.5 rounded-full ${style.bar}`} />
+        {material.subject}
+      </div>
+      <h3 className="mt-2 min-h-[42px] font-display text-[18px] leading-[1.05] tracking-[-0.02em] text-[#26323a]">
+        {material.title}
+      </h3>
+      <p className="mt-2 line-clamp-2 min-h-[34px] text-xs leading-relaxed text-[#8e8174]">
+        {material.description}
+      </p>
+      <div className="mt-4 flex items-center justify-between text-[11px] font-semibold text-[#9b8f82]">
+        <span className="flex items-center gap-1">
+          <Clock3 size={13} />
+          {material.duration}
+        </span>
+        <span>
+          {material.progress ? `${material.progress}% selesai` : "Belum mulai"}
+        </span>
+      </div>
+      <div className="mt-2">
+        <ProgressBar value={material.progress} color={style.bar} />
+      </div>
+      <Button
+        className="mt-4 h-9 w-full rounded-xl bg-[#26323a] text-xs font-bold text-[#fffaf1] shadow-none hover:bg-[#3b4b55]"
+        onClick={onOpen}
+      >
+        {material.progress ? "Lanjutkan" : "Mulai belajar"}
+        <ChevronRight size={15} />
+      </Button>
+    </article>
+  );
 }
 
 function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
@@ -85,74 +445,831 @@ function AuthScreen({ onLogin }: { onLogin: (user: User) => void }) {
   const [character, setCharacter] = useState<"male" | "female">("female");
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (!email || password.length < 4 || (mode === "register" && !name)) { toast.error("Lengkapi nama, email, dan kata sandi minimal 4 karakter."); return; }
-    const users = JSON.parse(localStorage.getItem("belajar_users") || "[]") as User[];
+    if (!email || password.length < 4 || (mode === "register" && !name)) {
+      toast.error("Lengkapi nama, email, dan kata sandi minimal 4 karakter.");
+      return;
+    }
+    const users = JSON.parse(
+      localStorage.getItem("belajar_users") || "[]"
+    ) as User[];
     if (mode === "register") {
-      if (users.some((user) => user.email === email)) { toast.error("Email sudah terdaftar. Silakan masuk."); return; }
-      const user = { name, email, password, character, joinedAt: new Date().toISOString() };
-      localStorage.setItem("belajar_users", JSON.stringify([...users, user])); localStorage.setItem("belajar_user", JSON.stringify(user)); onLogin(user); toast.success("Akun berhasil dibuat. Selamat belajar!");
+      if (users.some(user => user.email === email)) {
+        toast.error("Email sudah terdaftar. Silakan masuk.");
+        return;
+      }
+      const user = {
+        name,
+        email,
+        password,
+        character,
+        joinedAt: new Date().toISOString(),
+      };
+      localStorage.setItem("belajar_users", JSON.stringify([...users, user]));
+      localStorage.setItem("belajar_user", JSON.stringify(user));
+      onLogin(user);
+      toast.success("Akun berhasil dibuat. Selamat belajar!");
     } else {
-      const user = users.find((item) => item.email === email && item.password === password);
-      if (!user) { toast.error("Email atau kata sandi belum cocok."); return; }
-      localStorage.setItem("belajar_user", JSON.stringify(user)); onLogin(user); toast.success(`Selamat datang kembali, ${user.name}.`);
+      const user = users.find(
+        item => item.email === email && item.password === password
+      );
+      if (!user) {
+        toast.error("Email atau kata sandi belum cocok.");
+        return;
+      }
+      localStorage.setItem("belajar_user", JSON.stringify(user));
+      onLogin(user);
+      toast.success(`Selamat datang kembali, ${user.name}.`);
     }
   };
-  return <div className="flex min-h-screen items-center justify-center bg-[#f7f3ee] px-4 py-8 text-[#26323a]"><div className="grid w-full max-w-[1000px] overflow-hidden rounded-[30px] border border-[#e5dbd0] bg-[#fffdf9] shadow-[0_24px_70px_rgba(61,48,35,0.12)] lg:grid-cols-[1fr_0.86fr]"><div className="relative hidden min-h-[620px] overflow-hidden bg-[#f6cfad] lg:block"><img src={character === "female" ? femaleHero : heroImage} alt="Pelajar belajar mandiri" className="absolute inset-0 h-full w-full object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-[#26323a]/85 via-transparent to-[#f6cfad]/10" /><div className="relative flex h-full flex-col justify-between p-10"><div className="flex items-center gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-[#26323a] font-display text-[21px] font-bold text-[#f7d1b3]">b.</span><span className="font-display text-[22px] font-bold tracking-[-0.06em] text-[#26323a]">belajar<span className="text-[#e97848]">.</span></span></div><div className="text-[#fffaf1]"><p className="mb-3 text-[10px] font-bold uppercase tracking-[0.22em] text-[#f6cfad]">RUANG BELAJAR PRIBADI</p><h1 className="max-w-[390px] font-display text-[46px] leading-[0.94] tracking-[-0.06em]">Mulai dari langkah kecil.</h1><p className="mt-5 max-w-[330px] text-sm leading-relaxed text-[#e8e2d9]">Materi yang jelas, latihan yang terarah, dan progres yang kamu miliki sendiri.</p></div></div></div><div className="p-7 sm:p-10"><div className="mb-8 lg:hidden"><div className="flex items-center gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-[#26323a] font-display text-[21px] font-bold text-[#f7d1b3]">b.</span><span className="font-display text-[22px] font-bold tracking-[-0.06em]">belajar<span className="text-[#e97848]">.</span></span></div></div><div className="mb-8"><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a49384]">{mode === "register" ? "MULAI SEKARANG" : "SELAMAT DATANG KEMBALI"}</p><h2 className="mt-2 font-display text-[34px] leading-none tracking-[-0.05em]">{mode === "register" ? "Buat profil belajarmu." : "Masuk ke ruangmu."}</h2><p className="mt-3 text-sm leading-relaxed text-[#8e8174]">{mode === "register" ? "Simpan progres dan atur pengalaman belajar sesuai kebutuhanmu." : "Lanjutkan materi dan target yang sedang kamu kerjakan."}</p></div><div className="mb-5"><span className="mb-2 block text-xs font-bold text-[#6f6256]">Pilih karakter profil</span><div className="grid grid-cols-2 gap-2"><button type="button" className={`rounded-xl border p-3 text-left text-xs font-bold ${character === "female" ? "border-[#e97848] bg-[#fff0e6] text-[#a65332]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e]"}`} onClick={() => setCharacter("female")}>👩 Perempuan</button><button type="button" className={`rounded-xl border p-3 text-left text-xs font-bold ${character === "male" ? "border-[#6e9e8e] bg-[#e3f0ea] text-[#456e63]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e]"}`} onClick={() => setCharacter("male")}>👨 Laki-laki</button></div></div><form className="space-y-4" onSubmit={submit}>{mode === "register" && <label className="block"><span className="mb-1.5 block text-xs font-bold text-[#6f6256]">Nama panggilan</span><Input value={name} onChange={(event) => setName(event.target.value)} placeholder="Contoh: Naya" className="h-11 rounded-xl border-[#e1d6ca] bg-[#fffaf1] text-sm" /></label>}<label className="block"><span className="mb-1.5 block text-xs font-bold text-[#6f6256]">Email</span><Input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="nama@email.com" className="h-11 rounded-xl border-[#e1d6ca] bg-[#fffaf1] text-sm" /></label><label className="block"><span className="mb-1.5 block text-xs font-bold text-[#6f6256]">Kata sandi</span><Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Minimal 4 karakter" className="h-11 rounded-xl border-[#e1d6ca] bg-[#fffaf1] text-sm" /></label><Button type="submit" className="h-11 w-full rounded-xl bg-[#26323a] text-sm font-bold text-[#fffaf1] hover:bg-[#3b4b55]">{mode === "register" ? "Buat akun" : "Masuk"}<ChevronRight size={16} /></Button></form><p className="mt-6 text-center text-xs text-[#9a8e81]">{mode === "register" ? "Sudah punya akun?" : "Belum punya akun?"}{" "}<button type="button" className="font-bold text-[#b75c39] hover:underline" onClick={() => setMode(mode === "register" ? "login" : "register")}>{mode === "register" ? "Masuk di sini" : "Daftar sekarang"}</button></p><p className="mt-5 text-center text-[10px] leading-relaxed text-[#b2a394]">Progres belajar tersimpan pada perangkat ini.</p></div></div></div>;
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#f7f3ee] px-4 py-8 text-[#26323a]">
+      <div className="grid w-full max-w-[1000px] overflow-hidden rounded-[30px] border border-[#e5dbd0] bg-[#fffdf9] shadow-[0_24px_70px_rgba(61,48,35,0.12)] lg:grid-cols-[1fr_0.86fr]">
+        <div className="relative hidden min-h-[620px] overflow-hidden bg-[#f6cfad] lg:block">
+          <img
+            src={character === "female" ? femaleHero : heroImage}
+            alt="Pelajar belajar mandiri"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#26323a]/85 via-transparent to-[#f6cfad]/10" />
+          <div className="relative flex h-full flex-col justify-between p-10">
+            <div className="flex items-center gap-2">
+              <span className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-[#26323a] font-display text-[21px] font-bold text-[#f7d1b3]">
+                b.
+              </span>
+              <span className="font-display text-[22px] font-bold tracking-[-0.06em] text-[#26323a]">
+                belajar<span className="text-[#e97848]">.</span>
+              </span>
+            </div>
+            <div className="text-[#fffaf1]">
+              <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.22em] text-[#f6cfad]">
+                RUANG BELAJAR PRIBADI
+              </p>
+              <h1 className="max-w-[390px] font-display text-[46px] leading-[0.94] tracking-[-0.06em]">
+                Mulai dari langkah kecil.
+              </h1>
+              <p className="mt-5 max-w-[330px] text-sm leading-relaxed text-[#e8e2d9]">
+                Materi yang jelas, latihan yang terarah, dan progres yang kamu
+                miliki sendiri.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="p-7 sm:p-10">
+          <div className="mb-8 lg:hidden">
+            <div className="flex items-center gap-2">
+              <span className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-[#26323a] font-display text-[21px] font-bold text-[#f7d1b3]">
+                b.
+              </span>
+              <span className="font-display text-[22px] font-bold tracking-[-0.06em]">
+                belajar<span className="text-[#e97848]">.</span>
+              </span>
+            </div>
+          </div>
+          <div className="mb-8">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a49384]">
+              {mode === "register"
+                ? "MULAI SEKARANG"
+                : "SELAMAT DATANG KEMBALI"}
+            </p>
+            <h2 className="mt-2 font-display text-[34px] leading-none tracking-[-0.05em]">
+              {mode === "register"
+                ? "Buat profil belajarmu."
+                : "Masuk ke ruangmu."}
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-[#8e8174]">
+              {mode === "register"
+                ? "Simpan progres dan atur pengalaman belajar sesuai kebutuhanmu."
+                : "Lanjutkan materi dan target yang sedang kamu kerjakan."}
+            </p>
+          </div>
+          <div className="mb-5">
+            <span className="mb-2 block text-xs font-bold text-[#6f6256]">
+              Pilih karakter profil
+            </span>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                className={`rounded-xl border p-3 text-left text-xs font-bold ${character === "female" ? "border-[#e97848] bg-[#fff0e6] text-[#a65332]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e]"}`}
+                onClick={() => setCharacter("female")}
+              >
+                👩 Perempuan
+              </button>
+              <button
+                type="button"
+                className={`rounded-xl border p-3 text-left text-xs font-bold ${character === "male" ? "border-[#6e9e8e] bg-[#e3f0ea] text-[#456e63]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e]"}`}
+                onClick={() => setCharacter("male")}
+              >
+                👨 Laki-laki
+              </button>
+            </div>
+          </div>
+          <form className="space-y-4" onSubmit={submit}>
+            {mode === "register" && (
+              <label className="block">
+                <span className="mb-1.5 block text-xs font-bold text-[#6f6256]">
+                  Nama panggilan
+                </span>
+                <Input
+                  value={name}
+                  onChange={event => setName(event.target.value)}
+                  placeholder="Contoh: Naya"
+                  className="h-11 rounded-xl border-[#e1d6ca] bg-[#fffaf1] text-sm"
+                />
+              </label>
+            )}
+            <label className="block">
+              <span className="mb-1.5 block text-xs font-bold text-[#6f6256]">
+                Email
+              </span>
+              <Input
+                type="email"
+                value={email}
+                onChange={event => setEmail(event.target.value)}
+                placeholder="nama@email.com"
+                className="h-11 rounded-xl border-[#e1d6ca] bg-[#fffaf1] text-sm"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-xs font-bold text-[#6f6256]">
+                Kata sandi
+              </span>
+              <Input
+                type="password"
+                value={password}
+                onChange={event => setPassword(event.target.value)}
+                placeholder="Minimal 4 karakter"
+                className="h-11 rounded-xl border-[#e1d6ca] bg-[#fffaf1] text-sm"
+              />
+            </label>
+            <Button
+              type="submit"
+              className="h-11 w-full rounded-xl bg-[#26323a] text-sm font-bold text-[#fffaf1] hover:bg-[#3b4b55]"
+            >
+              {mode === "register" ? "Buat akun" : "Masuk"}
+              <ChevronRight size={16} />
+            </Button>
+          </form>
+          <p className="mt-6 text-center text-xs text-[#9a8e81]">
+            {mode === "register" ? "Sudah punya akun?" : "Belum punya akun?"}{" "}
+            <button
+              type="button"
+              className="font-bold text-[#b75c39] hover:underline"
+              onClick={() =>
+                setMode(mode === "register" ? "login" : "register")
+              }
+            >
+              {mode === "register" ? "Masuk di sini" : "Daftar sekarang"}
+            </button>
+          </p>
+          <p className="mt-5 text-center text-[10px] leading-relaxed text-[#b2a394]">
+            Progres belajar tersimpan pada perangkat ini.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-function OnboardingScreen({ user, onDone }: { user: User; onDone: (data: { done: boolean; className: string; subjects: string[]; dailyTarget: number; reminderTime: string; reminderEnabled: boolean }) => void }) {
+function OnboardingScreen({
+  user,
+  onDone,
+}: {
+  user: User;
+  onDone: (data: {
+    done: boolean;
+    className: string;
+    subjects: string[];
+    dailyTarget: number;
+    reminderTime: string;
+    reminderEnabled: boolean;
+  }) => void;
+}) {
   const [step, setStep] = useState(1);
   const [className, setClassName] = useState("X SMA");
   const [subjects, setSubjects] = useState<string[]>(["Matematika"]);
   const [dailyTarget, setDailyTarget] = useState(15);
   const [reminderTime, setReminderTime] = useState("19:00");
   const options = educationOptions;
-  const availableSubjects = [...subjectOptions, ...(className.includes("SMK") ? vocationalSubjects : [])];
-  const toggleSubject = (subject: string) => setSubjects((current) => current.includes(subject) ? current.filter((item) => item !== subject) : [...current, subject]);
-  const finish = () => { if (!subjects.length) { toast.error("Pilih minimal satu mata pelajaran."); return; } onDone({ done: true, className, subjects, dailyTarget, reminderTime, reminderEnabled: true }); toast.success("Ruang belajar berhasil dipersonalisasi."); };
-  return <div className="min-h-screen bg-[#f7f3ee] px-4 py-8 text-[#26323a]"><div className="mx-auto max-w-[900px] rounded-[30px] border border-[#e5dbd0] bg-[#fffdf9] p-6 shadow-[0_24px_70px_rgba(61,48,35,0.11)] sm:p-10"><div className="flex items-center justify-between"><div className="flex items-center gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-[#26323a] font-display text-[21px] font-bold text-[#f7d1b3]">b.</span><span className="font-display text-[22px] font-bold tracking-[-0.06em]">belajar<span className="text-[#e97848]">.</span></span></div><span className="text-xs font-bold text-[#a49384]">Langkah {step} dari 3</span></div><div className="mt-8 h-2 overflow-hidden rounded-full bg-[#eee6dd]"><div className="h-full rounded-full bg-[#e97848] transition-all" style={{ width: `${(step / 3) * 100}%` }} /></div><div className="mx-auto max-w-[640px] py-10"><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#a49384]">PENGATURAN AWAL</p><h1 className="mt-3 font-display text-[40px] leading-none tracking-[-0.06em]">Buat ruang belajar yang cocok untukmu.</h1><p className="mt-4 text-sm leading-relaxed text-[#8e8174]">Hai, {user.name}. Pilih beberapa preferensi agar rekomendasi dan target terasa lebih relevan.</p>{step === 1 && <div className="mt-9"><h2 className="font-display text-[23px]">Kamu sekarang di kelas berapa?</h2><div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">{options.map((option) => <button key={option} className={`rounded-2xl border p-4 text-left text-sm font-bold transition ${className === option ? "border-[#e97848] bg-[#fff0e6] text-[#a65332]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e] hover:border-[#ddb198]"}`} onClick={() => setClassName(option)}>{option}<span className="mt-1 block text-[10px] font-normal opacity-65">Materi sesuai tingkat</span></button>)}</div></div>}{step === 2 && <div className="mt-9"><h2 className="font-display text-[23px]">Mata pelajaran dan kejuruan.</h2><p className="mt-2 text-sm text-[#8e8174]">SMA dan SMK memakai pilihan mapel yang sama. Untuk SMK, pilih tambahan kejuruan seperti RPL atau TKJ.</p><div className="mt-5 grid gap-3 sm:grid-cols-2">{availableSubjects.map((subject) => <button key={subject} className={`flex items-center justify-between rounded-2xl border p-4 text-left text-sm font-bold ${subjects.includes(subject) ? "border-[#6e9e8e] bg-[#e3f0ea] text-[#456e63]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e]"}`} onClick={() => toggleSubject(subject)}>{subject}{subjects.includes(subject) && <CheckCircle2 size={18} />}</button>)}</div></div>}{step === 3 && <div className="mt-9"><h2 className="font-display text-[23px]">Tentukan target harianmu.</h2><div className="mt-5 grid gap-3 sm:grid-cols-3">{[15, 25, 45].map((minute) => <button key={minute} className={`rounded-2xl border p-4 text-left ${dailyTarget === minute ? "border-[#e97848] bg-[#fff0e6] text-[#a65332]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e]"}`} onClick={() => setDailyTarget(minute)}><strong className="font-display text-2xl">{minute}</strong><span className="ml-1 text-xs font-bold">menit</span><span className="mt-1 block text-[10px] opacity-70">per hari</span></button>)}</div><div className="mt-7 rounded-2xl bg-[#f4ede4] p-5"><div className="flex items-center gap-2 text-sm font-bold text-[#6f6256]"><Bell size={17} className="text-[#e97848]" /> Pengingat belajar harian</div><p className="mt-2 text-xs leading-relaxed text-[#9a8e81]">Pilih waktu yang nyaman supaya streak lebih mudah dijaga.</p><Input type="time" value={reminderTime} onChange={(event) => setReminderTime(event.target.value)} className="mt-4 h-11 w-full rounded-xl border-[#e1d6ca] bg-[#fffaf1] sm:w-40" /></div></div>}<div className="mt-10 flex justify-between gap-3"><Button variant="ghost" className="h-11 rounded-xl text-xs font-bold text-[#8e8174]" disabled={step === 1} onClick={() => setStep((value) => value - 1)}>Kembali</Button>{step < 3 ? <Button className="h-11 rounded-xl bg-[#26323a] px-6 text-xs font-bold text-white hover:bg-[#3b4b55]" onClick={() => setStep((value) => value + 1)}>Lanjutkan <ChevronRight size={15} /></Button> : <Button className="h-11 rounded-xl bg-[#e97848] px-6 text-xs font-bold text-white hover:bg-[#c85d35]" onClick={finish}>Masuk ke ruang belajar <ChevronRight size={15} /></Button>}</div></div></div></div>;
+  const availableSubjects = [
+    ...subjectOptions,
+    ...(className.includes("SMK") ? vocationalSubjects : []),
+  ];
+  const toggleSubject = (subject: string) =>
+    setSubjects(current =>
+      current.includes(subject)
+        ? current.filter(item => item !== subject)
+        : [...current, subject]
+    );
+  const finish = () => {
+    if (!subjects.length) {
+      toast.error("Pilih minimal satu mata pelajaran.");
+      return;
+    }
+    onDone({
+      done: true,
+      className,
+      subjects,
+      dailyTarget,
+      reminderTime,
+      reminderEnabled: true,
+    });
+    toast.success("Ruang belajar berhasil dipersonalisasi.");
+  };
+  return (
+    <div className="min-h-screen bg-[#f7f3ee] px-4 py-8 text-[#26323a]">
+      <div className="mx-auto max-w-[900px] rounded-[30px] border border-[#e5dbd0] bg-[#fffdf9] p-6 shadow-[0_24px_70px_rgba(61,48,35,0.11)] sm:p-10">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-[#26323a] font-display text-[21px] font-bold text-[#f7d1b3]">
+              b.
+            </span>
+            <span className="font-display text-[22px] font-bold tracking-[-0.06em]">
+              belajar<span className="text-[#e97848]">.</span>
+            </span>
+          </div>
+          <span className="text-xs font-bold text-[#a49384]">
+            Langkah {step} dari 3
+          </span>
+        </div>
+        <div className="mt-8 h-2 overflow-hidden rounded-full bg-[#eee6dd]">
+          <div
+            className="h-full rounded-full bg-[#e97848] transition-all"
+            style={{ width: `${(step / 3) * 100}%` }}
+          />
+        </div>
+        <div className="mx-auto max-w-[640px] py-10">
+          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#a49384]">
+            PENGATURAN AWAL
+          </p>
+          <h1 className="mt-3 font-display text-[40px] leading-none tracking-[-0.06em]">
+            Buat ruang belajar yang cocok untukmu.
+          </h1>
+          <p className="mt-4 text-sm leading-relaxed text-[#8e8174]">
+            Hai, {user.name}. Pilih beberapa preferensi agar rekomendasi dan
+            target terasa lebih relevan.
+          </p>
+          {step === 1 && (
+            <div className="mt-9">
+              <h2 className="font-display text-[23px]">
+                Kamu sekarang di kelas berapa?
+              </h2>
+              <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {options.map(option => (
+                  <button
+                    key={option}
+                    className={`rounded-2xl border p-4 text-left text-sm font-bold transition ${className === option ? "border-[#e97848] bg-[#fff0e6] text-[#a65332]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e] hover:border-[#ddb198]"}`}
+                    onClick={() => setClassName(option)}
+                  >
+                    {option}
+                    <span className="mt-1 block text-[10px] font-normal opacity-65">
+                      Materi sesuai tingkat
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          {step === 2 && (
+            <div className="mt-9">
+              <h2 className="font-display text-[23px]">
+                Mata pelajaran dan kejuruan.
+              </h2>
+              <p className="mt-2 text-sm text-[#8e8174]">
+                SMA dan SMK memakai pilihan mapel yang sama. Untuk SMK, pilih
+                tambahan kejuruan seperti RPL atau TKJ.
+              </p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                {availableSubjects.map(subject => (
+                  <button
+                    key={subject}
+                    className={`flex items-center justify-between rounded-2xl border p-4 text-left text-sm font-bold ${subjects.includes(subject) ? "border-[#6e9e8e] bg-[#e3f0ea] text-[#456e63]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e]"}`}
+                    onClick={() => toggleSubject(subject)}
+                  >
+                    {subject}
+                    {subjects.includes(subject) && <CheckCircle2 size={18} />}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          {step === 3 && (
+            <div className="mt-9">
+              <h2 className="font-display text-[23px]">
+                Tentukan target harianmu.
+              </h2>
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                {[15, 25, 45].map(minute => (
+                  <button
+                    key={minute}
+                    className={`rounded-2xl border p-4 text-left ${dailyTarget === minute ? "border-[#e97848] bg-[#fff0e6] text-[#a65332]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e]"}`}
+                    onClick={() => setDailyTarget(minute)}
+                  >
+                    <strong className="font-display text-2xl">{minute}</strong>
+                    <span className="ml-1 text-xs font-bold">menit</span>
+                    <span className="mt-1 block text-[10px] opacity-70">
+                      per hari
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <div className="mt-7 rounded-2xl bg-[#f4ede4] p-5">
+                <div className="flex items-center gap-2 text-sm font-bold text-[#6f6256]">
+                  <Bell size={17} className="text-[#e97848]" /> Pengingat
+                  belajar harian
+                </div>
+                <p className="mt-2 text-xs leading-relaxed text-[#9a8e81]">
+                  Pilih waktu yang nyaman supaya streak lebih mudah dijaga.
+                </p>
+                <Input
+                  type="time"
+                  value={reminderTime}
+                  onChange={event => setReminderTime(event.target.value)}
+                  className="mt-4 h-11 w-full rounded-xl border-[#e1d6ca] bg-[#fffaf1] sm:w-40"
+                />
+              </div>
+            </div>
+          )}
+          <div className="mt-10 flex justify-between gap-3">
+            <Button
+              variant="ghost"
+              className="h-11 rounded-xl text-xs font-bold text-[#8e8174]"
+              disabled={step === 1}
+              onClick={() => setStep(value => value - 1)}
+            >
+              Kembali
+            </Button>
+            {step < 3 ? (
+              <Button
+                className="h-11 rounded-xl bg-[#26323a] px-6 text-xs font-bold text-white hover:bg-[#3b4b55]"
+                onClick={() => setStep(value => value + 1)}
+              >
+                Lanjutkan <ChevronRight size={15} />
+              </Button>
+            ) : (
+              <Button
+                className="h-11 rounded-xl bg-[#e97848] px-6 text-xs font-bold text-white hover:bg-[#c85d35]"
+                onClick={finish}
+              >
+                Masuk ke ruang belajar <ChevronRight size={15} />
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-function ChatBot({ subject, level, onSaveHistory }: { subject: string; level?: string; onSaveHistory: (item: AiHistoryItem) => void }) {
+function ChatBot({
+  subject,
+  level,
+  onSaveHistory,
+}: {
+  subject: string;
+  level?: string;
+  onSaveHistory: (item: AiHistoryItem) => void;
+}) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [listening, setListening] = useState(false);
   const [thinking, setThinking] = useState(false);
-  const [muted, setMuted] = useState(() => localStorage.getItem("belajar_ai_muted") === "true");
-  const [speechRate, setSpeechRate] = useState(() => Number(localStorage.getItem("belajar_ai_rate") || "0.95"));
-  const [voiceName, setVoiceName] = useState(() => localStorage.getItem("belajar_ai_voice") || "");
-  const [chatLanguage, setChatLanguage] = useState<"id" | "en">(() => (localStorage.getItem("belajar_ai_language") || "id") as "id" | "en");
+  const [muted, setMuted] = useState(
+    () => localStorage.getItem("belajar_ai_muted") === "true"
+  );
+  const [speechRate, setSpeechRate] = useState(() =>
+    Number(localStorage.getItem("belajar_ai_rate") || "0.95")
+  );
+  const [voiceName, setVoiceName] = useState(
+    () => localStorage.getItem("belajar_ai_voice") || ""
+  );
+  const [chatLanguage, setChatLanguage] = useState<"id" | "en">(
+    () => (localStorage.getItem("belajar_ai_language") || "id") as "id" | "en"
+  );
   const [conversationMode, setConversationMode] = useState(false);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
-  const [messages, setMessages] = useState<{ role: "bot" | "user"; text: string }[]>([{ role: "bot", text: "Halo! Aku Asisten Belajar. Tanyakan topik apa saja, minta ringkasan, atau minta dibuatkan kuis kustom sesuai materi yang sedang kamu pelajari." }]);
-  const fallbackAnswer = (question: string) => { const q = question.toLowerCase(); if (chatLanguage === "en") { if (q.includes("spldv") || q.includes("linear")) return "SPLDV is a system of two linear equations with two variables. You can solve it using substitution or elimination."; if (q.includes("substitusi") || q.includes("substitution")) return "In substitution, rewrite one equation for x or y, then place it into the other equation step by step."; return "I can help explain a topic, work through an example, or create a custom quiz in English. Try asking about a specific concept."; } if (q.includes("spldv") || q.includes("persamaan") || q.includes("linear")) return "SPLDV adalah sistem yang terdiri dari dua persamaan linear dengan dua variabel. Bentuk umumnya ax + by = c. Kamu bisa menyelesaikannya dengan metode substitusi atau eliminasi."; if (q.includes("substitusi")) return "Pada metode substitusi, ubah salah satu persamaan menjadi bentuk x = ... atau y = ..., lalu masukkan ke persamaan lainnya. Setelah satu variabel ditemukan, cari variabel yang lain."; if (q.includes("streak") || q.includes("target")) return "Agar streak terjaga, tetapkan target kecil seperti 15 menit per hari. Buka Kalender untuk mengatur hari dan waktu pengingat belajar."; if (q.includes("biologi") || q.includes("pernapasan")) return "Materi Sistem Pernapasan membahas organ pernapasan, mekanisme inspirasi-ekspirasi, dan gangguan pernapasan. Mulai dari rangkuman lalu lanjutkan ke kuis."; if (q.includes("bahasa") || q.includes("descriptive")) return "Descriptive Text biasanya memiliki identification dan description. Gunakan adjectives untuk menjelaskan ciri objek secara spesifik."; return "Tentu, aku tetap bisa diajak ngobrol di luar materi sekolah. Aku dapat membantu menjelaskan pengetahuan umum, menyusun ide, memberi contoh, atau membahas topik sehari-hari. Ceritakan saja apa yang ingin kamu tanyakan."; };
-  const askAI = async (question: string) => { const baseUrl = (import.meta.env.VITE_FRONTEND_FORGE_API_URL || "").replace(/\/$/, ""); const apiKey = import.meta.env.VITE_FRONTEND_FORGE_API_KEY; if (!baseUrl || !apiKey) return fallbackAnswer(question); try { const response = await fetch(`${baseUrl}/v1/chat/completions`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` }, body: JSON.stringify({ model: "gpt-5-mini", max_completion_tokens: 500, messages: [{ role: "system", content: `You are a friendly, natural, general-purpose AI assistant and tutor for a student in ${level || "general"}. Respond in ${chatLanguage === "id" ? "Indonesian" : "English"}. You can answer questions about any topic, not only the active school subject. Never refuse merely because a question is outside ${subject}; answer normally, and only connect it to learning when useful. Explain step by step, use simple examples, and be honest when you are unsure. If the user asks for a summary, create a structured summary with key points and an example. If the user asks for a quiz, create 3-5 multiple-choice questions with an answer key and brief explanations. The active subject is ${subject}. ${conversationMode ? "Run an interactive conversation practice: act as a patient conversation partner, ask one short question at a time, correct grammar or word choice gently, then continue the roleplay." : ""}` }, { role: "user", content: question }] }) }); if (!response.ok) throw new Error("AI request failed"); const data = await response.json(); return data.choices?.[0]?.message?.content || fallbackAnswer(question); } catch { return fallbackAnswer(question); } };
-  useEffect(() => { if (!("speechSynthesis" in window)) return; const loadVoices = () => setVoices(window.speechSynthesis.getVoices()); loadVoices(); window.speechSynthesis.addEventListener("voiceschanged", loadVoices); return () => window.speechSynthesis.removeEventListener("voiceschanged", loadVoices); }, []);
-  useEffect(() => { localStorage.setItem("belajar_ai_rate", String(speechRate)); }, [speechRate]);
-  useEffect(() => { localStorage.setItem("belajar_ai_voice", voiceName); }, [voiceName]);
-  useEffect(() => { localStorage.setItem("belajar_ai_language", chatLanguage); }, [chatLanguage]);
-  const speak = (text: string) => { if (!muted && "speechSynthesis" in window) { window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = chatLanguage === "id" ? "id-ID" : "en-US"; utterance.rate = speechRate; const selectedVoice = voices.find((voice) => voice.name === voiceName) || voices.find((voice) => voice.lang.toLowerCase().startsWith(chatLanguage === "id" ? "id" : "en")) || voices.find((voice) => voice.lang.toLowerCase().startsWith(chatLanguage === "id" ? "en" : "id")); if (selectedVoice) utterance.voice = selectedVoice; window.speechSynthesis.speak(utterance); } };
-  const testVoice = () => { speak(chatLanguage === "id" ? "Halo, ini contoh suara Asisten Belajar." : "Hello, this is a voice preview from your Study Assistant."); };
-  const enterConversationMode = () => { setConversationMode(true); const languageName = subject === "Bahasa Jepang" ? "Bahasa Jepang" : "Bahasa Inggris"; const prompt = chatLanguage === "id" ? `Mulai latihan percakapan ${languageName}. Sapa aku dan berikan satu pertanyaan sederhana.` : `Start an interactive ${languageName === "Bahasa Jepang" ? "Japanese" : "English"} conversation practice. Greet me and ask one simple question.`; setInput(prompt); toast.success(`Mode percakapan ${languageName} aktif. Gunakan mikrofon untuk menjawab.`); };
-  const toggleMute = () => { setMuted((value) => { const next = !value; localStorage.setItem("belajar_ai_muted", String(next)); if (next && "speechSynthesis" in window) window.speechSynthesis.cancel(); toast.success(next ? "Suara Asisten Belajar dimatikan." : "Suara Asisten Belajar diaktifkan."); return next; }); };
-  const startListening = () => { const SpeechRecognition = (window as typeof window & { SpeechRecognition?: new () => any; webkitSpeechRecognition?: new () => any }).SpeechRecognition || (window as typeof window & { webkitSpeechRecognition?: new () => any }).webkitSpeechRecognition; if (!SpeechRecognition) { toast.error("Browser ini belum mendukung input suara."); return; } const recognition = new SpeechRecognition(); recognition.lang = chatLanguage === "id" ? "id-ID" : "en-US"; recognition.continuous = false; recognition.interimResults = false; recognition.onstart = () => setListening(true); recognition.onend = () => setListening(false); recognition.onerror = () => { setListening(false); toast.error("Suara belum tertangkap. Coba lagi."); }; recognition.onresult = (event: any) => { const text = event.results[0][0].transcript; setInput(text); }; recognition.start(); };
-  const send = async () => { if (!input.trim() || thinking) return; const text = input.trim(); setMessages((current) => [...current, { role: "user", text }]); setInput(""); setThinking(true); const response = await askAI(text); const lower = text.toLowerCase(); const kind: AiHistoryItem["kind"] = lower.includes("ringkas") || lower.includes("rangkuman") ? "Ringkasan" : lower.includes("kuis") || lower.includes("soal") || lower.includes("latihan") ? "Kuis" : "Jawaban"; onSaveHistory({ id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, kind, topic: subject, prompt: text, answer: response, createdAt: new Date().toISOString() }); setMessages((current) => [...current, { role: "bot", text: response }]); setThinking(false); speak(response); };
-  return <div className="fixed bottom-5 right-5 z-50"><button aria-label="Buka Asisten Belajar" className="flex h-14 w-14 items-center justify-center rounded-full bg-[#26323a] text-[#f6cfad] shadow-[0_10px_28px_rgba(38,50,58,0.25)] transition hover:-translate-y-1 hover:bg-[#3b4b55]" onClick={() => setOpen((value) => !value)}>{open ? <X size={21} /> : <Sparkles size={22} />}</button>{open && <div className="absolute bottom-[70px] right-0 flex h-[480px] w-[min(360px,calc(100vw-32px))] flex-col overflow-hidden rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] shadow-[0_18px_55px_rgba(61,48,35,0.19)]"><div className="flex items-center gap-3 bg-[#26323a] p-4 text-[#fffaf1]"><div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#e97848]"><Sparkles size={17} /></div><div><p className="text-sm font-bold">Asisten Belajar</p><p className="text-[10px] text-[#c1ccca]">Berbasis materi belajar</p></div><button aria-label={muted ? "Nyalakan suara AI" : "Mute suara AI"} className="ml-auto rounded-lg p-1 text-[#d6e2dd] hover:bg-white/10" onClick={toggleMute}>{muted ? <VolumeX size={15} /> : <Volume2 size={15} />}</button><span className="h-2 w-2 rounded-full bg-[#77c69f]" /></div><div className="flex-1 space-y-3 overflow-y-auto bg-[#f7f3ee] p-4">{messages.map((message, index) => <div key={`${message.role}-${index}`} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}><div className={`max-w-[85%] rounded-2xl px-3 py-2.5 text-xs leading-relaxed ${message.role === "user" ? "rounded-br-sm bg-[#e97848] text-white" : "rounded-bl-sm bg-[#fffdf9] text-[#6f6256] shadow-sm"}`}>{message.text}{message.role === "bot" && <button aria-label="Dengarkan jawaban" className="ml-2 inline-flex align-middle text-[#e97848]" onClick={() => speak(message.text)}><Volume2 size={12} /></button>}</div></div>)}{thinking && <div className="text-xs text-[#9a8e81]">Asisten sedang menyusun jawaban...</div>}</div><div className="border-t border-[#eee5dc] bg-[#fffdf9] p-3"><p className="mb-2 text-[9px] font-semibold text-[#a99b8e]">Suara AI: {muted ? "Mute" : "Aktif"}{conversationMode ? " · Mode percakapan aktif" : ""}</p><div className="mb-2 grid grid-cols-2 gap-2"><label className="rounded-lg bg-[#f7f0e9] px-2 py-1 text-[9px] font-semibold text-[#8f8173]">Bahasa <select aria-label="Bahasa chatbot AI" value={chatLanguage} onChange={(event) => setChatLanguage(event.target.value as "id" | "en")} className="ml-1 bg-transparent font-bold text-[#a65332] outline-none"><option value="id">Indonesia</option><option value="en">English</option></select></label><button aria-label="Uji suara AI" className="rounded-lg bg-[#f4e7dc] px-2 py-1 text-[9px] font-bold text-[#a65332]" onClick={testVoice}><Volume2 size={11} className="mr-1 inline" />Uji suara</button></div><div className="mb-2 grid grid-cols-2 gap-2"><label className="rounded-lg bg-[#f7f0e9] px-2 py-1 text-[9px] font-semibold text-[#8f8173]">Kecepatan <select aria-label="Kecepatan suara AI" value={speechRate} onChange={(event) => setSpeechRate(Number(event.target.value))} className="ml-1 max-w-[70px] bg-transparent font-bold text-[#a65332] outline-none"><option value="0.7">Pelan</option><option value="0.95">Normal</option><option value="1.2">Cepat</option><option value="1.5">Sangat cepat</option></select></label><label className="rounded-lg bg-[#f7f0e9] px-2 py-1 text-[9px] font-semibold text-[#8f8173]">Jenis suara <select aria-label="Jenis suara AI" value={voiceName} onChange={(event) => setVoiceName(event.target.value)} className="ml-1 max-w-[100px] bg-transparent font-bold text-[#a65332] outline-none"><option value="">Otomatis</option>{voices.map((voice) => <option key={`${voice.name}-${voice.lang}`} value={voice.name}>{voice.name.slice(0, 20)}</option>)}</select></label></div><div className="mb-2 flex flex-wrap gap-2">{(subject === "Bahasa Inggris" || subject === "Bahasa Jepang") && <button className="rounded-lg bg-[#e7deea] px-2 py-1 text-[9px] font-bold text-[#604c65]" onClick={enterConversationMode}>Latihan percakapan</button>}<button className="rounded-lg bg-[#f4e7dc] px-2 py-1 text-[9px] font-bold text-[#a65332]" onClick={() => setInput(chatLanguage === "id" ? `Buatkan ringkasan materi ${subject}` : `Create a summary of ${subject}`)}>Ringkas materi</button><button className="rounded-lg bg-[#e3f0ea] px-2 py-1 text-[9px] font-bold text-[#456e63]" onClick={() => setInput(chatLanguage === "id" ? `Buatkan kuis kustom tentang ${subject}` : `Create a custom quiz about ${subject}`)}>Buat kuis kustom</button></div><div className="flex gap-2"><Input value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") send(); }} placeholder="Tanyakan sesuatu..." className="h-10 rounded-xl border-[#e1d6ca] bg-[#fffaf1] text-xs" /><Button aria-label="Input suara" className={`h-10 w-10 shrink-0 rounded-xl p-0 ${listening ? "bg-[#e97848] text-white" : "bg-[#f4e7dc] text-[#a65332]"}`} onClick={startListening}>{listening ? <MicOff size={16} /> : <Mic size={16} />}</Button><Button aria-label="Kirim pertanyaan" className="h-10 w-10 shrink-0 rounded-xl bg-[#26323a] p-0 text-white hover:bg-[#3b4b55]" onClick={send}><ChevronRight size={16} /></Button></div><p className="mt-2 text-[9px] text-[#b2a394]">Jawaban saat ini menggunakan materi inti yang tersedia di website.</p></div></div>}</div>;
+  const [messages, setMessages] = useState<
+    { role: "bot" | "user"; text: string }[]
+  >([
+    {
+      role: "bot",
+      text: "Halo! Aku Asisten Belajar. Tanyakan topik apa saja, minta ringkasan, atau minta dibuatkan kuis kustom sesuai materi yang sedang kamu pelajari.",
+    },
+  ]);
+  const fallbackAnswer = (question: string) => {
+    const q = question.toLowerCase();
+    if (chatLanguage === "en") {
+      if (q.includes("spldv") || q.includes("linear"))
+        return "SPLDV is a system of two linear equations with two variables. You can solve it using substitution or elimination.";
+      if (q.includes("substitusi") || q.includes("substitution"))
+        return "In substitution, rewrite one equation for x or y, then place it into the other equation step by step.";
+      return "I can help explain a topic, work through an example, or create a custom quiz in English. Try asking about a specific concept.";
+    }
+    if (q.includes("spldv") || q.includes("persamaan") || q.includes("linear"))
+      return "SPLDV adalah sistem yang terdiri dari dua persamaan linear dengan dua variabel. Bentuk umumnya ax + by = c. Kamu bisa menyelesaikannya dengan metode substitusi atau eliminasi.";
+    if (q.includes("substitusi"))
+      return "Pada metode substitusi, ubah salah satu persamaan menjadi bentuk x = ... atau y = ..., lalu masukkan ke persamaan lainnya. Setelah satu variabel ditemukan, cari variabel yang lain.";
+    if (q.includes("streak") || q.includes("target"))
+      return "Agar streak terjaga, tetapkan target kecil seperti 15 menit per hari. Buka Kalender untuk mengatur hari dan waktu pengingat belajar.";
+    if (q.includes("biologi") || q.includes("pernapasan"))
+      return "Materi Sistem Pernapasan membahas organ pernapasan, mekanisme inspirasi-ekspirasi, dan gangguan pernapasan. Mulai dari rangkuman lalu lanjutkan ke kuis.";
+    if (q.includes("bahasa") || q.includes("descriptive"))
+      return "Descriptive Text biasanya memiliki identification dan description. Gunakan adjectives untuk menjelaskan ciri objek secara spesifik.";
+    return "Tentu, aku tetap bisa diajak ngobrol di luar materi sekolah. Aku dapat membantu menjelaskan pengetahuan umum, menyusun ide, memberi contoh, atau membahas topik sehari-hari. Ceritakan saja apa yang ingin kamu tanyakan.";
+  };
+  const askAI = async (question: string) => {
+    const baseUrl = (import.meta.env.VITE_FRONTEND_FORGE_API_URL || "").replace(
+      /\/$/,
+      ""
+    );
+    const apiKey = import.meta.env.VITE_FRONTEND_FORGE_API_KEY;
+    if (!baseUrl || !apiKey) return fallbackAnswer(question);
+    try {
+      const response = await fetch(`${baseUrl}/v1/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-5-mini",
+          max_completion_tokens: 500,
+          messages: [
+            {
+              role: "system",
+              content: `You are a friendly, natural, general-purpose AI assistant and tutor for a student in ${level || "general"}. Respond in ${chatLanguage === "id" ? "Indonesian" : "English"}. You can answer questions about any topic, not only the active school subject. Never refuse merely because a question is outside ${subject}; answer normally, and only connect it to learning when useful. Explain step by step, use simple examples, and be honest when you are unsure. If the user asks for a summary, create a structured summary with key points and an example. If the user asks for a quiz, create 3-5 multiple-choice questions with an answer key and brief explanations. The active subject is ${subject}. ${conversationMode ? "Run an interactive conversation practice: act as a patient conversation partner, ask one short question at a time, correct grammar or word choice gently, then continue the roleplay." : ""}`,
+            },
+            { role: "user", content: question },
+          ],
+        }),
+      });
+      if (!response.ok) throw new Error("AI request failed");
+      const data = await response.json();
+      return data.choices?.[0]?.message?.content || fallbackAnswer(question);
+    } catch {
+      return fallbackAnswer(question);
+    }
+  };
+  useEffect(() => {
+    if (!("speechSynthesis" in window)) return;
+    const loadVoices = () => setVoices(window.speechSynthesis.getVoices());
+    loadVoices();
+    window.speechSynthesis.addEventListener("voiceschanged", loadVoices);
+    return () =>
+      window.speechSynthesis.removeEventListener("voiceschanged", loadVoices);
+  }, []);
+  useEffect(() => {
+    localStorage.setItem("belajar_ai_rate", String(speechRate));
+  }, [speechRate]);
+  useEffect(() => {
+    localStorage.setItem("belajar_ai_voice", voiceName);
+  }, [voiceName]);
+  useEffect(() => {
+    localStorage.setItem("belajar_ai_language", chatLanguage);
+  }, [chatLanguage]);
+  const speak = (text: string) => {
+    if (!muted && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = chatLanguage === "id" ? "id-ID" : "en-US";
+      utterance.rate = speechRate;
+      const selectedVoice =
+        voices.find(voice => voice.name === voiceName) ||
+        voices.find(voice =>
+          voice.lang
+            .toLowerCase()
+            .startsWith(chatLanguage === "id" ? "id" : "en")
+        ) ||
+        voices.find(voice =>
+          voice.lang
+            .toLowerCase()
+            .startsWith(chatLanguage === "id" ? "en" : "id")
+        );
+      if (selectedVoice) utterance.voice = selectedVoice;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+  const testVoice = () => {
+    speak(
+      chatLanguage === "id"
+        ? "Halo, ini contoh suara Asisten Belajar."
+        : "Hello, this is a voice preview from your Study Assistant."
+    );
+  };
+  const enterConversationMode = () => {
+    setConversationMode(true);
+    const languageName =
+      subject === "Bahasa Jepang" ? "Bahasa Jepang" : "Bahasa Inggris";
+    const prompt =
+      chatLanguage === "id"
+        ? `Mulai latihan percakapan ${languageName}. Sapa aku dan berikan satu pertanyaan sederhana.`
+        : `Start an interactive ${languageName === "Bahasa Jepang" ? "Japanese" : "English"} conversation practice. Greet me and ask one simple question.`;
+    setInput(prompt);
+    toast.success(
+      `Mode percakapan ${languageName} aktif. Gunakan mikrofon untuk menjawab.`
+    );
+  };
+  const toggleMute = () => {
+    setMuted(value => {
+      const next = !value;
+      localStorage.setItem("belajar_ai_muted", String(next));
+      if (next && "speechSynthesis" in window) window.speechSynthesis.cancel();
+      toast.success(
+        next
+          ? "Suara Asisten Belajar dimatikan."
+          : "Suara Asisten Belajar diaktifkan."
+      );
+      return next;
+    });
+  };
+  const startListening = () => {
+    const SpeechRecognition =
+      (
+        window as typeof window & {
+          SpeechRecognition?: new () => any;
+          webkitSpeechRecognition?: new () => any;
+        }
+      ).SpeechRecognition ||
+      (window as typeof window & { webkitSpeechRecognition?: new () => any })
+        .webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast.error("Browser ini belum mendukung input suara.");
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = chatLanguage === "id" ? "id-ID" : "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.onstart = () => setListening(true);
+    recognition.onend = () => setListening(false);
+    recognition.onerror = () => {
+      setListening(false);
+      toast.error("Suara belum tertangkap. Coba lagi.");
+    };
+    recognition.onresult = (event: any) => {
+      const text = event.results[0][0].transcript;
+      setInput(text);
+    };
+    recognition.start();
+  };
+  const send = async () => {
+    if (!input.trim() || thinking) return;
+    const text = input.trim();
+    setMessages(current => [...current, { role: "user", text }]);
+    setInput("");
+    setThinking(true);
+    const response = await askAI(text);
+    const lower = text.toLowerCase();
+    const kind: AiHistoryItem["kind"] =
+      lower.includes("ringkas") || lower.includes("rangkuman")
+        ? "Ringkasan"
+        : lower.includes("kuis") ||
+            lower.includes("soal") ||
+            lower.includes("latihan")
+          ? "Kuis"
+          : "Jawaban";
+    onSaveHistory({
+      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      kind,
+      topic: subject,
+      prompt: text,
+      answer: response,
+      createdAt: new Date().toISOString(),
+    });
+    setMessages(current => [...current, { role: "bot", text: response }]);
+    setThinking(false);
+    speak(response);
+  };
+  return (
+    <div className="fixed bottom-5 right-5 z-50">
+      <button
+        aria-label="Buka Asisten Belajar"
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-[#26323a] text-[#f6cfad] shadow-[0_10px_28px_rgba(38,50,58,0.25)] transition hover:-translate-y-1 hover:bg-[#3b4b55]"
+        onClick={() => setOpen(value => !value)}
+      >
+        {open ? <X size={21} /> : <Sparkles size={22} />}
+      </button>
+      {open && (
+        <div className="absolute bottom-[70px] right-0 flex h-[480px] w-[min(360px,calc(100vw-32px))] flex-col overflow-hidden rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] shadow-[0_18px_55px_rgba(61,48,35,0.19)]">
+          <div className="flex items-center gap-3 bg-[#26323a] p-4 text-[#fffaf1]">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#e97848]">
+              <Sparkles size={17} />
+            </div>
+            <div>
+              <p className="text-sm font-bold">Asisten Belajar</p>
+              <p className="text-[10px] text-[#c1ccca]">
+                Berbasis materi belajar
+              </p>
+            </div>
+            <button
+              aria-label={muted ? "Nyalakan suara AI" : "Mute suara AI"}
+              className="ml-auto rounded-lg p-1 text-[#d6e2dd] hover:bg-white/10"
+              onClick={toggleMute}
+            >
+              {muted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+            </button>
+            <span className="h-2 w-2 rounded-full bg-[#77c69f]" />
+          </div>
+          <div className="flex-1 space-y-3 overflow-y-auto bg-[#f7f3ee] p-4">
+            {messages.map((message, index) => (
+              <div
+                key={`${message.role}-${index}`}
+                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`max-w-[85%] rounded-2xl px-3 py-2.5 text-xs leading-relaxed ${message.role === "user" ? "rounded-br-sm bg-[#e97848] text-white" : "rounded-bl-sm bg-[#fffdf9] text-[#6f6256] shadow-sm"}`}
+                >
+                  {message.text}
+                  {message.role === "bot" && (
+                    <button
+                      aria-label="Dengarkan jawaban"
+                      className="ml-2 inline-flex align-middle text-[#e97848]"
+                      onClick={() => speak(message.text)}
+                    >
+                      <Volume2 size={12} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+            {thinking && (
+              <div className="text-xs text-[#9a8e81]">
+                Asisten sedang menyusun jawaban...
+              </div>
+            )}
+          </div>
+          <div className="border-t border-[#eee5dc] bg-[#fffdf9] p-3">
+            <p className="mb-2 text-[9px] font-semibold text-[#a99b8e]">
+              Suara AI: {muted ? "Mute" : "Aktif"}
+              {conversationMode ? " · Mode percakapan aktif" : ""}
+            </p>
+            <div className="mb-2 grid grid-cols-2 gap-2">
+              <label className="rounded-lg bg-[#f7f0e9] px-2 py-1 text-[9px] font-semibold text-[#8f8173]">
+                Bahasa{" "}
+                <select
+                  aria-label="Bahasa chatbot AI"
+                  value={chatLanguage}
+                  onChange={event =>
+                    setChatLanguage(event.target.value as "id" | "en")
+                  }
+                  className="ml-1 bg-transparent font-bold text-[#a65332] outline-none"
+                >
+                  <option value="id">Indonesia</option>
+                  <option value="en">English</option>
+                </select>
+              </label>
+              <button
+                aria-label="Uji suara AI"
+                className="rounded-lg bg-[#f4e7dc] px-2 py-1 text-[9px] font-bold text-[#a65332]"
+                onClick={testVoice}
+              >
+                <Volume2 size={11} className="mr-1 inline" />
+                Uji suara
+              </button>
+            </div>
+            <div className="mb-2 grid grid-cols-2 gap-2">
+              <label className="rounded-lg bg-[#f7f0e9] px-2 py-1 text-[9px] font-semibold text-[#8f8173]">
+                Kecepatan{" "}
+                <select
+                  aria-label="Kecepatan suara AI"
+                  value={speechRate}
+                  onChange={event => setSpeechRate(Number(event.target.value))}
+                  className="ml-1 max-w-[70px] bg-transparent font-bold text-[#a65332] outline-none"
+                >
+                  <option value="0.7">Pelan</option>
+                  <option value="0.95">Normal</option>
+                  <option value="1.2">Cepat</option>
+                  <option value="1.5">Sangat cepat</option>
+                </select>
+              </label>
+              <label className="rounded-lg bg-[#f7f0e9] px-2 py-1 text-[9px] font-semibold text-[#8f8173]">
+                Jenis suara{" "}
+                <select
+                  aria-label="Jenis suara AI"
+                  value={voiceName}
+                  onChange={event => setVoiceName(event.target.value)}
+                  className="ml-1 max-w-[100px] bg-transparent font-bold text-[#a65332] outline-none"
+                >
+                  <option value="">Otomatis</option>
+                  {voices.map(voice => (
+                    <option
+                      key={`${voice.name}-${voice.lang}`}
+                      value={voice.name}
+                    >
+                      {voice.name.slice(0, 20)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="mb-2 flex flex-wrap gap-2">
+              {(subject === "Bahasa Inggris" ||
+                subject === "Bahasa Jepang") && (
+                <button
+                  className="rounded-lg bg-[#e7deea] px-2 py-1 text-[9px] font-bold text-[#604c65]"
+                  onClick={enterConversationMode}
+                >
+                  Latihan percakapan
+                </button>
+              )}
+              <button
+                className="rounded-lg bg-[#f4e7dc] px-2 py-1 text-[9px] font-bold text-[#a65332]"
+                onClick={() =>
+                  setInput(
+                    chatLanguage === "id"
+                      ? `Buatkan ringkasan materi ${subject}`
+                      : `Create a summary of ${subject}`
+                  )
+                }
+              >
+                Ringkas materi
+              </button>
+              <button
+                className="rounded-lg bg-[#e3f0ea] px-2 py-1 text-[9px] font-bold text-[#456e63]"
+                onClick={() =>
+                  setInput(
+                    chatLanguage === "id"
+                      ? `Buatkan kuis kustom tentang ${subject}`
+                      : `Create a custom quiz about ${subject}`
+                  )
+                }
+              >
+                Buat kuis kustom
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <Input
+                value={input}
+                onChange={event => setInput(event.target.value)}
+                onKeyDown={event => {
+                  if (event.key === "Enter") send();
+                }}
+                placeholder="Tanyakan sesuatu..."
+                className="h-10 rounded-xl border-[#e1d6ca] bg-[#fffaf1] text-xs"
+              />
+              <Button
+                aria-label="Input suara"
+                className={`h-10 w-10 shrink-0 rounded-xl p-0 ${listening ? "bg-[#e97848] text-white" : "bg-[#f4e7dc] text-[#a65332]"}`}
+                onClick={startListening}
+              >
+                {listening ? <MicOff size={16} /> : <Mic size={16} />}
+              </Button>
+              <Button
+                aria-label="Kirim pertanyaan"
+                className="h-10 w-10 shrink-0 rounded-xl bg-[#26323a] p-0 text-white hover:bg-[#3b4b55]"
+                onClick={send}
+              >
+                <ChevronRight size={16} />
+              </Button>
+            </div>
+            <p className="mt-2 text-[9px] text-[#b2a394]">
+              Jawaban saat ini menggunakan materi inti yang tersedia di website.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(() => JSON.parse(localStorage.getItem("belajar_user") || "null"));
+  const [user, setUser] = useState<User | null>(() =>
+    JSON.parse(localStorage.getItem("belajar_user") || "null")
+  );
   const [page, setPage] = useState<Page>("Beranda");
-  const [onboarding, setOnboarding] = useState<{ done: boolean; className?: string; subjects?: string[]; dailyTarget?: number; reminderTime?: string; reminderEnabled?: boolean }>(() => JSON.parse(localStorage.getItem("belajar_onboarding") || "null") || { done: false });
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("belajar_dark") === "true");
+  const [onboarding, setOnboarding] = useState<{
+    done: boolean;
+    className?: string;
+    subjects?: string[];
+    dailyTarget?: number;
+    reminderTime?: string;
+    reminderEnabled?: boolean;
+  }>(
+    () =>
+      JSON.parse(localStorage.getItem("belajar_onboarding") || "null") || {
+        done: false,
+      }
+  );
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem("belajar_dark") === "true"
+  );
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [profileCharacter, setProfileCharacter] = useState<"male" | "female">(() => (JSON.parse(localStorage.getItem("belajar_user") || "null")?.character || "female") as "male" | "female");
+  const [profileCharacter, setProfileCharacter] = useState<"male" | "female">(
+    () =>
+      (JSON.parse(localStorage.getItem("belajar_user") || "null")?.character ||
+        "female") as "male" | "female"
+  );
   const [editName, setEditName] = useState("");
   const [search, setSearch] = useState("");
-  const [saved, setSaved] = useState<string[]>(() => JSON.parse(localStorage.getItem("belajar_saved") || "[\"spldv\"]"));
-  const [selectedMaterial, setSelectedMaterial] = useState<typeof materials[number] | null>(null);
-  const [streak, setStreak] = useState(() => Number(localStorage.getItem("belajar_streak") || "4"));
+  const [saved, setSaved] = useState<string[]>(() =>
+    JSON.parse(localStorage.getItem("belajar_saved") || '["spldv"]')
+  );
+  const [selectedMaterial, setSelectedMaterial] = useState<
+    (typeof materials)[number] | null
+  >(null);
+  const [streak, setStreak] = useState(() =>
+    Number(localStorage.getItem("belajar_streak") || "4")
+  );
   const [quizIndex, setQuizIndex] = useState(0);
   const [answer, setAnswer] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -160,94 +1277,2899 @@ export default function Home() {
   const [quizFinished, setQuizFinished] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
   const [celebration, setCelebration] = useState<string | null>(null);
-  const [lastQuizScore, setLastQuizScore] = useState(() => Number(localStorage.getItem("belajar_last_quiz_score") || "3"));
-  const [aiHistory, setAiHistory] = useState<AiHistoryItem[]>(() => JSON.parse(localStorage.getItem("belajar_ai_history") || "[]"));
-  const [progress, setProgress] = useState(() => Number(localStorage.getItem("belajar_progress") || "68"));
-  const [activeSubject, setActiveSubject] = useState(() => localStorage.getItem("belajar_active_subject") || "Matematika");
-  const [libraryGrade, setLibraryGrade] = useState(() => localStorage.getItem("belajar_class") || "SMA");
+  const [lastQuizScore, setLastQuizScore] = useState(() =>
+    Number(localStorage.getItem("belajar_last_quiz_score") || "3")
+  );
+  const [aiHistory, setAiHistory] = useState<AiHistoryItem[]>(() =>
+    JSON.parse(localStorage.getItem("belajar_ai_history") || "[]")
+  );
+  const [progress, setProgress] = useState(() =>
+    Number(localStorage.getItem("belajar_progress") || "68")
+  );
+  const [activeSubject, setActiveSubject] = useState(
+    () => localStorage.getItem("belajar_active_subject") || "Matematika"
+  );
+  const [libraryGrade, setLibraryGrade] = useState(
+    () => localStorage.getItem("belajar_class") || "SMA"
+  );
   const [librarySemester, setLibrarySemester] = useState("Semua semester");
   const [libraryChapter, setLibraryChapter] = useState("Semua bab");
   const [bankAnswer, setBankAnswer] = useState<number | null>(null);
   const [bankSubmitted, setBankSubmitted] = useState(false);
-  const [targetCompletedToday, setTargetCompletedToday] = useState(() => localStorage.getItem("belajar_target_date") === new Date().toISOString().slice(0, 10));
+  const [targetCompletedToday, setTargetCompletedToday] = useState(
+    () =>
+      localStorage.getItem("belajar_target_date") ===
+      new Date().toISOString().slice(0, 10)
+  );
   const [aiQuestion, setAiQuestion] = useState("");
   const [aiAnswer, setAiAnswer] = useState("");
-  const [uploadedMaterials, setUploadedMaterials] = useState<string[]>(() => JSON.parse(localStorage.getItem("belajar_uploaded_materials") || "[]"));
+  const [uploadedMaterials, setUploadedMaterials] = useState<string[]>(() =>
+    JSON.parse(localStorage.getItem("belajar_uploaded_materials") || "[]")
+  );
   const [flashcardIndex, setFlashcardIndex] = useState(0);
   const [flashcardFlipped, setFlashcardFlipped] = useState(false);
-  const [curriculumLevel, setCurriculumLevel] = useState("1 SD");
-  const [generatedMaterials, setGeneratedMaterials] = useState<{name: string; summary: string; quiz: string}[]>(() => JSON.parse(localStorage.getItem("belajar_generated_materials") || "[]"));
+  const [curriculumLevel, setCurriculumLevel] = useState(
+    () => localStorage.getItem("belajar_curriculum_level") || "1 SD"
+  );
+  const [curriculumSubject, setCurriculumSubject] = useState("Matematika");
+  const [generatedMaterials, setGeneratedMaterials] = useState<
+    { name: string; summary: string; quiz: string }[]
+  >(() =>
+    JSON.parse(localStorage.getItem("belajar_generated_materials") || "[]")
+  );
 
-  useEffect(() => { localStorage.setItem("belajar_dark", String(darkMode)); }, [darkMode]);
-  useEffect(() => { localStorage.setItem("belajar_saved", JSON.stringify(saved)); }, [saved]);
-  useEffect(() => { localStorage.setItem("belajar_progress", String(progress)); }, [progress]);
-  useEffect(() => { localStorage.setItem("belajar_last_quiz_score", String(lastQuizScore)); }, [lastQuizScore]);
-  useEffect(() => { localStorage.setItem("belajar_ai_history", JSON.stringify(aiHistory.slice(0, 30))); }, [aiHistory]);
-  useEffect(() => { localStorage.setItem("belajar_active_subject", activeSubject); }, [activeSubject]);
-  useEffect(() => { localStorage.setItem("belajar_class", libraryGrade); }, [libraryGrade]);
-  useEffect(() => { localStorage.setItem("belajar_onboarding", JSON.stringify(onboarding)); }, [onboarding]);
-  useEffect(() => { localStorage.setItem("belajar_uploaded_materials", JSON.stringify(uploadedMaterials)); }, [uploadedMaterials]);
-  useEffect(() => { localStorage.setItem("belajar_generated_materials", JSON.stringify(generatedMaterials)); }, [generatedMaterials]);
-  useEffect(() => { if (user) localStorage.setItem("belajar_user", JSON.stringify(user)); }, [user]);
+  useEffect(() => {
+    localStorage.setItem("belajar_dark", String(darkMode));
+  }, [darkMode]);
+  useEffect(() => {
+    localStorage.setItem("belajar_saved", JSON.stringify(saved));
+  }, [saved]);
+  useEffect(() => {
+    localStorage.setItem("belajar_progress", String(progress));
+  }, [progress]);
+  useEffect(() => {
+    localStorage.setItem("belajar_last_quiz_score", String(lastQuizScore));
+  }, [lastQuizScore]);
+  useEffect(() => {
+    localStorage.setItem(
+      "belajar_ai_history",
+      JSON.stringify(aiHistory.slice(0, 30))
+    );
+  }, [aiHistory]);
+  useEffect(() => {
+    localStorage.setItem("belajar_active_subject", activeSubject);
+  }, [activeSubject]);
+  useEffect(() => {
+    localStorage.setItem("belajar_class", libraryGrade);
+  }, [libraryGrade]);
+  useEffect(() => {
+    localStorage.setItem("belajar_onboarding", JSON.stringify(onboarding));
+  }, [onboarding]);
+  useEffect(() => {
+    localStorage.setItem(
+      "belajar_uploaded_materials",
+      JSON.stringify(uploadedMaterials)
+    );
+  }, [uploadedMaterials]);
+  useEffect(() => {
+    localStorage.setItem(
+      "belajar_generated_materials",
+      JSON.stringify(generatedMaterials)
+    );
+  }, [generatedMaterials]);
+  useEffect(() => {
+    if (user) localStorage.setItem("belajar_user", JSON.stringify(user));
+  }, [user]);
 
   const selectableSubjects = [...subjectOptions, ...vocationalSubjects];
-  const visibleMaterials = useMemo(() => materials.filter((item) => `${item.title} ${item.subject}`.toLowerCase().includes(search.toLowerCase())), [search]);
+  const visibleMaterials = useMemo(
+    () =>
+      materials.filter(item =>
+        `${item.title} ${item.subject}`
+          .toLowerCase()
+          .includes(search.toLowerCase())
+      ),
+    [search]
+  );
   const character = user?.character || profileCharacter;
-  const initials = user?.name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase() || "PB";
-  const go = (next: Page) => { setPage(next); setMobileOpen(false); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const resetQuiz = () => { setQuizIndex(0); setAnswer(null); setSubmitted(false); setQuizScore(0); setQuizFinished(false); setQuizStarted(true); };
+  const initials =
+    user?.name
+      .split(" ")
+      .map(part => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "PB";
+  const go = (next: Page) => {
+    setPage(next);
+    setMobileOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const resetQuiz = () => {
+    setQuizIndex(0);
+    setAnswer(null);
+    setSubmitted(false);
+    setQuizScore(0);
+    setQuizFinished(false);
+    setQuizStarted(true);
+  };
   const submitAnswer = () => {
     if (answer === null) return;
-    if (!submitted) { setSubmitted(true); if (answer === quizQuestions[quizIndex].answer) setQuizScore((score) => score + 1); return; }
-    if (quizIndex === quizQuestions.length - 1) { const finalScore = quizScore + (answer === quizQuestions[quizIndex].answer ? 1 : 0); setLastQuizScore(finalScore); setQuizFinished(true); celebrate("Kuis selesai! Kamu hebat!"); toast.success("Kuis selesai. Hasilmu tersimpan di progres."); }
-    else { setQuizIndex((index) => index + 1); setAnswer(null); setSubmitted(false); }
+    if (!submitted) {
+      setSubmitted(true);
+      if (answer === quizQuestions[quizIndex].answer)
+        setQuizScore(score => score + 1);
+      return;
+    }
+    if (quizIndex === quizQuestions.length - 1) {
+      const finalScore =
+        quizScore + (answer === quizQuestions[quizIndex].answer ? 1 : 0);
+      setLastQuizScore(finalScore);
+      setQuizFinished(true);
+      celebrate("Kuis selesai! Kamu hebat!");
+      toast.success("Kuis selesai. Hasilmu tersimpan di progres.");
+    } else {
+      setQuizIndex(index => index + 1);
+      setAnswer(null);
+      setSubmitted(false);
+    }
   };
-  const logout = () => { localStorage.removeItem("belajar_user"); setUser(null); setProfileOpen(false); toast.success("Kamu sudah keluar dari akun."); };
-  const saveProfile = () => { if (!user || !editName.trim()) return; setUser({ ...user, name: editName.trim(), character: profileCharacter }); setProfileOpen(false); toast.success("Profil berhasil diperbarui."); };
-  const toggleSave = (id: string) => { setSaved((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]); toast.success(saved.includes(id) ? "Materi dihapus dari tersimpan." : "Materi disimpan."); };
-  const celebrate = (message: string) => { setCelebration(message); if ("AudioContext" in window || "webkitAudioContext" in window) { const AudioCtor = (window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext) as typeof AudioContext; if (AudioCtor) { const audio = new AudioCtor(); [0, 0.12, 0.24].forEach((delay, index) => { const oscillator = audio.createOscillator(); const gain = audio.createGain(); oscillator.frequency.value = [523, 659, 784][index]; gain.gain.setValueAtTime(0.0001, audio.currentTime + delay); gain.gain.exponentialRampToValueAtTime(0.12, audio.currentTime + delay + 0.02); gain.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + delay + 0.22); oscillator.connect(gain); gain.connect(audio.destination); oscillator.start(audio.currentTime + delay); oscillator.stop(audio.currentTime + delay + 0.24); }); } } window.setTimeout(() => setCelebration(null), 4200); };
-  const shareAchievement = async (type: "sertifikat" | "lencana" | "statistik") => { const text = type === "sertifikat" ? `Aku baru menyelesaikan sertifikat Fondasi SPLDV di Belajar Mandiri!` : type === "lencana" ? `Aku berhasil menjaga daily streak ${streak} hari dan membuka lencana belajar!` : `Progress belajarku: ${progress}% materi selesai, streak ${streak} hari, dan skor kuis 86.`; const payload = { title: "Pencapaian Belajar Mandiri", text, url: window.location.href }; try { if (navigator.share) await navigator.share(payload); else { await navigator.clipboard.writeText(`${text} ${window.location.href}`); toast.success("Teks pencapaian disalin. Siap dibagikan ke media sosial."); return; } toast.success("Pencapaian siap dibagikan."); } catch { toast.info("Berbagi dibatalkan."); } };
-  const markStudy = (isTarget = false) => { const today = new Date().toISOString().slice(0, 10); if (isTarget && localStorage.getItem("belajar_target_date") === today) { toast.info("Target hari ini sudah ditandai selesai. Kembali lagi besok!"); return; } if (!isTarget && localStorage.getItem("belajar_last_streak_date") === today) { toast.info("Streak hari ini sudah tercatat. Kembali lagi besok!"); return; } if (isTarget) { localStorage.setItem("belajar_target_date", today); setTargetCompletedToday(true); } else localStorage.setItem("belajar_last_streak_date", today); const next = Math.min(progress + 5, 100); setProgress(next); setStreak((value) => { const updated = value + 1; localStorage.setItem("belajar_streak", String(updated)); return updated; }); celebrate(isTarget ? "Target harian tercapai!" : next >= 100 ? "Progress materi selesai!" : "Sesi belajar selesai!"); toast.success(isTarget ? "Target hari ini selesai." : "Sesi belajar tercatat."); }; const enableNotifications = async () => { if (!("Notification" in window)) { toast.error("Browser ini belum mendukung notifikasi."); return; } const permission = await Notification.requestPermission(); if (permission === "granted") { setOnboarding({ ...onboarding, reminderEnabled: true }); new Notification("Belajar Mandiri", { body: `Pengingat aktif. Saatnya belajar ${onboarding.reminderTime || "19:00"}.` }); toast.success("Notifikasi belajar diaktifkan."); } else toast.error("Izin notifikasi belum diberikan."); };
+  const logout = () => {
+    localStorage.removeItem("belajar_user");
+    setUser(null);
+    setProfileOpen(false);
+    toast.success("Kamu sudah keluar dari akun.");
+  };
+  const saveProfile = () => {
+    if (!user || !editName.trim()) return;
+    setUser({ ...user, name: editName.trim(), character: profileCharacter });
+    setProfileOpen(false);
+    toast.success("Profil berhasil diperbarui.");
+  };
+  const toggleSave = (id: string) => {
+    setSaved(current =>
+      current.includes(id)
+        ? current.filter(item => item !== id)
+        : [...current, id]
+    );
+    toast.success(
+      saved.includes(id) ? "Materi dihapus dari tersimpan." : "Materi disimpan."
+    );
+  };
+  const celebrate = (message: string) => {
+    setCelebration(message);
+    if ("AudioContext" in window || "webkitAudioContext" in window) {
+      const AudioCtor = (window.AudioContext ||
+        (window as typeof window & { webkitAudioContext?: typeof AudioContext })
+          .webkitAudioContext) as typeof AudioContext;
+      if (AudioCtor) {
+        const audio = new AudioCtor();
+        [0, 0.12, 0.24].forEach((delay, index) => {
+          const oscillator = audio.createOscillator();
+          const gain = audio.createGain();
+          oscillator.frequency.value = [523, 659, 784][index];
+          gain.gain.setValueAtTime(0.0001, audio.currentTime + delay);
+          gain.gain.exponentialRampToValueAtTime(
+            0.12,
+            audio.currentTime + delay + 0.02
+          );
+          gain.gain.exponentialRampToValueAtTime(
+            0.0001,
+            audio.currentTime + delay + 0.22
+          );
+          oscillator.connect(gain);
+          gain.connect(audio.destination);
+          oscillator.start(audio.currentTime + delay);
+          oscillator.stop(audio.currentTime + delay + 0.24);
+        });
+      }
+    }
+    window.setTimeout(() => setCelebration(null), 4200);
+  };
+  const shareAchievement = async (
+    type: "sertifikat" | "lencana" | "statistik"
+  ) => {
+    const text =
+      type === "sertifikat"
+        ? `Aku baru menyelesaikan sertifikat Fondasi SPLDV di Belajar Mandiri!`
+        : type === "lencana"
+          ? `Aku berhasil menjaga daily streak ${streak} hari dan membuka lencana belajar!`
+          : `Progress belajarku: ${progress}% materi selesai, streak ${streak} hari, dan skor kuis 86.`;
+    const payload = {
+      title: "Pencapaian Belajar Mandiri",
+      text,
+      url: window.location.href,
+    };
+    try {
+      if (navigator.share) await navigator.share(payload);
+      else {
+        await navigator.clipboard.writeText(`${text} ${window.location.href}`);
+        toast.success(
+          "Teks pencapaian disalin. Siap dibagikan ke media sosial."
+        );
+        return;
+      }
+      toast.success("Pencapaian siap dibagikan.");
+    } catch {
+      toast.info("Berbagi dibatalkan.");
+    }
+  };
+  const markStudy = (isTarget = false) => {
+    const today = new Date().toISOString().slice(0, 10);
+    if (isTarget && localStorage.getItem("belajar_target_date") === today) {
+      toast.info("Target hari ini sudah ditandai selesai. Kembali lagi besok!");
+      return;
+    }
+    if (
+      !isTarget &&
+      localStorage.getItem("belajar_last_streak_date") === today
+    ) {
+      toast.info("Streak hari ini sudah tercatat. Kembali lagi besok!");
+      return;
+    }
+    if (isTarget) {
+      localStorage.setItem("belajar_target_date", today);
+      setTargetCompletedToday(true);
+    } else localStorage.setItem("belajar_last_streak_date", today);
+    const next = Math.min(progress + 5, 100);
+    setProgress(next);
+    setStreak(value => {
+      const updated = value + 1;
+      localStorage.setItem("belajar_streak", String(updated));
+      return updated;
+    });
+    celebrate(
+      isTarget
+        ? "Target harian tercapai!"
+        : next >= 100
+          ? "Progress materi selesai!"
+          : "Sesi belajar selesai!"
+    );
+    toast.success(
+      isTarget ? "Target hari ini selesai." : "Sesi belajar tercatat."
+    );
+  };
+  const enableNotifications = async () => {
+    if (!("Notification" in window)) {
+      toast.error("Browser ini belum mendukung notifikasi.");
+      return;
+    }
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      setOnboarding({ ...onboarding, reminderEnabled: true });
+      new Notification("Belajar Mandiri", {
+        body: `Pengingat aktif. Saatnya belajar ${onboarding.reminderTime || "19:00"}.`,
+      });
+      toast.success("Notifikasi belajar diaktifkan.");
+    } else toast.error("Izin notifikasi belum diberikan.");
+  };
 
   if (!user) return <AuthScreen onLogin={setUser} />;
-  if (!onboarding.done) return <OnboardingScreen user={user} onDone={(data) => { setOnboarding(data); setLibraryGrade(data.className); if (data.subjects[0]) setActiveSubject(data.subjects[0]); }} />;
+  if (!onboarding.done)
+    return (
+      <OnboardingScreen
+        user={user}
+        onDone={data => {
+          setOnboarding(data);
+          setLibraryGrade(data.className);
+          if (data.subjects[0]) setActiveSubject(data.subjects[0]);
+        }}
+      />
+    );
 
-  const recommendation = lastQuizScore <= 1 ? { eyebrow: "PERLU DIKUATKAN", title: `Ulangi konsep ${activeSubject}`, text: `Skor kuis terakhir ${lastQuizScore}/${quizQuestions.length}. Mulai dari rangkuman singkat lalu coba latihan bertahap.`, action: "Buka materi", page: "Materi" as Page } : progress < 75 ? { eyebrow: "LANGKAH BERIKUTNYA", title: `Lanjutkan ${activeSubject}`, text: `Pemahamanmu sudah mulai terbentuk. Selesaikan satu sesi ${onboarding.dailyTarget || 15} menit untuk menaikkan progres.`, action: "Mulai sesi", page: "Materi" as Page } : { eyebrow: "TANTANGAN HARI INI", title: "Uji pemahamanmu lagi", text: `Progresmu sudah ${progress}%. Tantang dirimu dengan kuis baru agar pemahaman tetap tajam.`, action: "Mulai kuis", page: "Kuis" as Page };
-  const saveAiHistory = (item: AiHistoryItem) => setAiHistory((current) => [item, ...current.filter((old) => old.prompt !== item.prompt)].slice(0, 30));
-  const removeAiHistory = (id: string) => setAiHistory((current) => current.filter((item) => item.id !== id));
-  const curriculumMap: Record<string, {title: string; chapters: string[]}> = { "TK": { title: "Fondasi bermain dan mengenal dunia", chapters: ["Angka dan bentuk", "Bahasa dan cerita", "Seni dan lingkungan"] }, "1 SD": { title: "Membaca, berhitung, dan mengenal lingkungan", chapters: ["Huruf dan kalimat", "Bilangan sampai 20", "Diriku dan keluarga"] }, "2 SD": { title: "Pemahaman dasar dan latihan rutin", chapters: ["Penjumlahan dan pengurangan", "Membaca pemahaman", "Waktu, uang, dan pengukuran"] }, "3 SD": { title: "Konsep dasar yang makin terstruktur", chapters: ["Perkalian dan pembagian", "Teks informasi", "Makhluk hidup dan lingkungan"] }, "4 SD": { title: "Berpikir kritis dan memahami konsep", chapters: ["Pecahan dan bangun datar", "Ide pokok dan wawancara", "Gaya dan energi"] }, "5 SD": { title: "Penerapan konsep dalam kehidupan", chapters: ["KPK, FPB, dan volume", "Ekosistem", "Teks eksplanasi"] }, "6 SD": { title: "Persiapan jenjang SMP", chapters: ["Operasi bilangan dan data", "Tata surya dan energi", "Pidato dan laporan"] }, "SMP": { title: "Fondasi sains, bahasa, dan matematika", chapters: ["Aljabar dan persamaan", "Teks narasi dan eksplanasi", "Zat, energi, dan kehidupan"] }, "SMA/SMK": { title: "Pendalaman mapel umum Kurikulum Merdeka", chapters: ["Aljabar, fungsi, geometri, peluang", "Literasi dan karya ilmiah", "Sains, sosial, informatika, dan projek"] } };
-  const curriculumRoadmap = <section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5 dark-card"><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">PETA KURIKULUM RUNTUT</p><div className="mt-2 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-display text-[27px] leading-none text-[#26323a]">Pelajaran per kelas dan bab.</h2><p className="mt-3 text-sm text-[#8e8174]">SMA dan SMK memakai materi umum yang sama. Kejuruan hanya opsi tambahan.</p></div><select value={curriculumLevel} onChange={(event) => setCurriculumLevel(event.target.value)} className="h-10 rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e]"><option value="TK">TK</option><option value="1 SD">Kelas 1 SD</option><option value="2 SD">Kelas 2 SD</option><option value="3 SD">Kelas 3 SD</option><option value="4 SD">Kelas 4 SD</option><option value="5 SD">Kelas 5 SD</option><option value="6 SD">Kelas 6 SD</option><option value="SMP">SMP</option><option value="SMA/SMK">SMA / SMK</option></select></div><div className="mt-5 rounded-2xl bg-[#e3f0ea] p-5"><p className="text-[10px] font-bold uppercase text-[#456e63]">{curriculumLevel}</p><h3 className="mt-2 font-display text-xl text-[#31584f]">{curriculumMap[curriculumLevel].title}</h3><div className="mt-4 grid gap-2 md:grid-cols-3">{curriculumMap[curriculumLevel].chapters.map((chapter, index) => <div key={chapter} className="rounded-xl bg-white/70 p-3 text-xs font-bold text-[#456e63]"><span className="mr-2 text-[#a65332]">Bab {index + 1}</span>{chapter}</div>)}</div></div></section>;
-  const videoCatalog = <section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5"><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">VIDEO PER BAB</p><h2 className="mt-2 font-display text-[27px] leading-none text-[#26323a]">Rekomendasi video berdasarkan bab.</h2><div className="mt-5 grid gap-3 md:grid-cols-3"><article className="rounded-2xl bg-[#f6e2d5] p-4"><p className="text-[10px] font-bold text-[#a65332]">MATEMATIKA · ALJABAR</p><p className="mt-2 text-sm font-bold text-[#70402d]">Kelas X Kurikulum Merdeka</p><a className="mt-3 inline-block rounded-lg bg-[#a65332] px-3 py-2 text-[11px] font-bold text-white" href="https://www.youtube.com/watch?v=IDRlYbeX734" target="_blank" rel="noreferrer">Tonton</a></article><article className="rounded-2xl bg-[#e3f0ea] p-4"><p className="text-[10px] font-bold text-[#456e63]">RPL · WEB DASAR</p><p className="mt-2 text-sm font-bold text-[#31584f]">Teknologi Aplikasi Web SMK</p><a className="mt-3 inline-block rounded-lg bg-[#31584f] px-3 py-2 text-[11px] font-bold text-white" href="https://www.youtube.com/watch?v=dfVp3FFZotA" target="_blank" rel="noreferrer">Tonton</a></article><article className="rounded-2xl bg-[#f0e4bc] p-4"><p className="text-[10px] font-bold text-[#8d6c27]">BUKU · SEMUA JENJANG</p><p className="mt-2 text-sm font-bold text-[#6f5526]">Buku digital per kelas dan mapel</p><a className="mt-3 inline-block rounded-lg bg-[#8d6c27] px-3 py-2 text-[11px] font-bold text-white" href="https://buku.kemendikdasmen.go.id/katalog" target="_blank" rel="noreferrer">Buka SIBI</a></article></div></section>;
-  const expandedVideoCatalog = <section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5"><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">KATALOG VIDEO PER MAPEL</p><h2 className="mt-2 font-display text-[27px] leading-none text-[#26323a]">Bab lanjutan untuk SD, SMP, SMA, dan SMK.</h2><div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{[{subject:"Bahasa Indonesia",chapter:"Teks dan literasi",url:"https://www.youtube.com/results?search_query=materi+Bahasa+Indonesia+Kurikulum+Merdeka"},{subject:"IPA",chapter:"Energi dan makhluk hidup",url:"https://www.youtube.com/results?search_query=materi+IPA+Kurikulum+Merdeka"},{subject:"Bahasa Inggris",chapter:"Descriptive text",url:"https://www.youtube.com/results?search_query=materi+Bahasa+Inggris+SMA+Kurikulum+Merdeka"},{subject:"TKJ",chapter:"Jaringan dasar",url:"https://www.youtube.com/results?search_query=materi+TKJ+jaringan+dasar+SMK"}].map((video) => <a key={video.subject} href={video.url} target="_blank" rel="noreferrer" className="rounded-2xl bg-[#f4ede4] p-4 transition hover:-translate-y-0.5"><p className="text-[10px] font-bold uppercase text-[#a65332]">{video.subject}</p><p className="mt-2 text-sm font-bold text-[#26323a]">{video.chapter}</p><p className="mt-3 text-[11px] font-bold text-[#a65332]">Cari video bab →</p></a>)}</div></section>;
-  const resourceShelf = <section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">PERPUSTAKAAN BELAJAR</p><h2 className="mt-2 font-display text-[27px] leading-none text-[#26323a]">Video YouTube dan buku pelajaran.</h2><p className="mt-3 text-sm text-[#8e8174]">Materi kurikulum disediakan oleh platform. Pengguna juga tetap bisa mengunggah materi pribadi untuk dipelajari bersama AI.</p></div><div className="mt-5 grid gap-4 md:grid-cols-2"><article className="rounded-2xl bg-[#f6e2d5] p-5"><Play className="text-[#a65332]" size={21}/><h3 className="mt-3 font-display text-xl text-[#70402d]">Video YouTube terpilih</h3><p className="mt-2 text-xs leading-relaxed text-[#9a6d58]">Video Matematika kelas X Kurikulum Merdeka dan pengantar RPL untuk memahami materi melalui penjelasan visual.</p><div className="mt-4 flex flex-wrap gap-2"><a className="rounded-xl bg-[#a65332] px-3 py-2 text-xs font-bold text-white" href="https://www.youtube.com/watch?v=IDRlYbeX734" target="_blank" rel="noreferrer">Video Matematika</a><a className="rounded-xl border border-[#d8b09c] px-3 py-2 text-xs font-bold text-[#a65332]" href="https://www.youtube.com/watch?v=dfVp3FFZotA" target="_blank" rel="noreferrer">Video RPL</a></div></article><article className="rounded-2xl bg-[#e3f0ea] p-5"><BookOpen className="text-[#456e63]" size={21}/><h3 className="mt-3 font-display text-xl text-[#31584f]">Buku pelajaran resmi</h3><p className="mt-2 text-xs leading-relaxed text-[#668176]">Akses buku digital SMA/SMK dari SIBI, platform resmi Pusat Perbukuan. Pilih jenjang dan mapel sesuai kebutuhan.</p><div className="mt-4 flex flex-wrap gap-2"><a className="rounded-xl bg-[#31584f] px-3 py-2 text-xs font-bold text-white" href="https://buku.kemendikdasmen.go.id/katalog" target="_blank" rel="noreferrer">Buka katalog SIBI</a><a className="rounded-xl border border-[#a8c8ba] px-3 py-2 text-xs font-bold text-[#456e63]" href="https://buku.kemendikdasmen.go.id/katalog/buku-kurikulum-merdeka" target="_blank" rel="noreferrer">Kurikulum Merdeka</a></div></article></div></section>;
-  const aiWorkspace = <section className="mb-8 grid gap-5 lg:grid-cols-[220px_1fr]"><aside className="rounded-[22px] border border-[#e4dbd0] bg-[#fffdf9] p-4"><div className="flex items-center gap-2 text-sm font-bold text-[#26323a]"><History size={16} className="text-[#a65332]"/>Riwayat AI</div><p className="mt-2 text-xs leading-relaxed text-[#8e8174]">Pertanyaan, ringkasan, dan kuis yang pernah dibuat.</p><div className="mt-5 space-y-2"><button className="w-full rounded-xl bg-[#f6e2d5] px-3 py-2 text-left text-xs font-bold text-[#a65332]">SMA · Materi umum</button><button className="w-full rounded-xl bg-[#e3f0ea] px-3 py-2 text-left text-xs font-bold text-[#456e63]">SMK · Materi umum</button><button className="w-full rounded-xl border border-[#e4dbd0] px-3 py-2 text-left text-xs font-bold text-[#76695e]">Kejuruan · Opsional</button></div></aside><div className="rounded-[24px] bg-[#26323a] p-5 text-white"><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#d1bda6]">RUANG TANYA AI</p><h2 className="mt-2 font-display text-[27px] leading-none">Tanyakan materi apa saja.</h2><p className="mt-3 text-sm text-[#c6c5b9]">AI membantu menjelaskan materi SMA dan SMK yang sama. Pilihan kejuruan hanya digunakan jika pengguna ingin belajar RPL, TKJ, atau bidang lain.</p><div className="mt-4 flex gap-2"><Input value={aiQuestion} onChange={(event) => setAiQuestion(event.target.value)} placeholder="Contoh: jelaskan SPLDV dengan sederhana" className="h-11 border-0 bg-white/10 text-sm text-white placeholder:text-white/50" /><Button className="h-11 bg-[#f6cfad] text-xs font-bold text-[#26323a] hover:bg-[#eebd97]" onClick={() => { if (!aiQuestion.trim()) return; setAiAnswer(`Pertanyaan tentang ${aiQuestion.trim()} disimpan. Asisten AI akan melanjutkan penjelasan sesuai mapel aktif.`); setAiQuestion(""); toast.success("Pertanyaan disimpan ke riwayat AI."); }}>Tanya AI</Button></div>{aiAnswer && <p className="mt-3 rounded-xl bg-white/10 p-3 text-sm text-[#e8e2d9]">{aiAnswer}</p>}<p className="mt-4 text-xs text-[#c6c5b9]">Asisten AI berbentuk tombol mengambang tetap tersedia di pojok kanan bawah.</p></div></section>;
-  const aiAskRoom = <section className="mb-8 rounded-[24px] bg-[#26323a] p-5 text-white"><div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#d1bda6]">TANYA AI + RIWAYAT</p><h2 className="mt-2 font-display text-[27px] leading-none">Tanyakan apa saja tentang materi.</h2><p className="mt-3 text-sm text-[#c6c5b9]">Pertanyaan dan jawaban terbaru tersimpan di halaman AI Belajar. Asisten AI di pojok tetap tersedia.</p></div><History className="text-[#f6cfad]" size={22}/></div><div className="mt-4 flex gap-2"><Input value={aiQuestion} onChange={(event) => setAiQuestion(event.target.value)} placeholder="Contoh: jelaskan subnetting dengan sederhana" className="h-11 border-0 bg-white/10 text-sm text-white placeholder:text-white/50" /><Button className="h-11 bg-[#f6cfad] text-xs font-bold text-[#26323a] hover:bg-[#eebd97]" onClick={() => { if (!aiQuestion.trim()) return; setAiAnswer(`Pertanyaanmu tentang ${aiQuestion.trim()} sudah dicatat. Buka AI Belajar untuk melanjutkan penjelasan dan melihat riwayatnya.`); setAiQuestion(""); toast.success("Pertanyaan disimpan ke riwayat AI."); }}>Tanya</Button></div>{aiAnswer && <p className="mt-3 rounded-xl bg-white/10 p-3 text-sm text-[#e8e2d9]">{aiAnswer}</p>}<Button variant="ghost" className="mt-3 h-8 text-xs text-[#f6cfad]" onClick={() => go("AI Belajar")}>Buka AI Belajar dan riwayat <ChevronRight size={14}/></Button></section>;
-  const learningToolkit = <section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card"><div className="flex flex-wrap items-center justify-between gap-4"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">RUANG BELAJAR</p><h2 className="mt-2 font-display text-[27px] leading-none text-[#26323a]">Video, flashcard, kuis, dan ringkasan.</h2><p className="mt-3 text-sm text-[#8e8174]">Guru dapat mengunggah materi untuk dipelajari dengan beberapa cara.</p></div><label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#26323a] px-4 py-2.5 text-xs font-bold text-white"><Plus size={14}/>Upload materi<input type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt" className="hidden" onChange={(event) => { const file = event.target.files?.[0]; if (file) { setUploadedMaterials((items) => [file.name, ...items].slice(0, 10)); setGeneratedMaterials((items) => [{ name: file.name, summary: `Ringkasan otomatis: pahami konsep inti, istilah penting, contoh, dan langkah latihan dari ${file.name}.`, quiz: `Kuis kustom: apa konsep utama dalam ${file.name}? Jelaskan dengan contoh sederhana.`, }, ...items].slice(0, 10)); toast.success("AI membuat ringkasan dan kuis dari materi."); } }} /></label></div><div className="mt-5 grid gap-3 sm:grid-cols-4"><button className="rounded-2xl bg-[#f6e2d5] p-4 text-left" onClick={() => toast.info("Tambahkan tautan video pada materi untuk mulai menonton.")}><Play size={19} className="text-[#a65332]"/><strong className="mt-3 block text-sm text-[#70402d]">Video pembelajaran</strong><span className="mt-1 block text-xs text-[#9a6d58]">Visual dan audio.</span></button><button className="rounded-2xl bg-[#e3f0ea] p-4 text-left" onClick={() => setFlashcardFlipped((value) => !value)}><BookOpen size={19} className="text-[#456e63]"/><strong className="mt-3 block text-sm text-[#31584f]">Flashcard</strong><span className="mt-1 block text-xs text-[#668176]">{flashcardFlipped ? "Jawaban tampil" : "Balik kartu konsep"}</span></button><button className="rounded-2xl bg-[#f0e4bc] p-4 text-left" onClick={() => go("AI Belajar")}><Sparkles size={19} className="text-[#8d6c27]"/><strong className="mt-3 block text-sm text-[#6f5526]">Ringkasan AI</strong><span className="mt-1 block text-xs text-[#947a39]">Ringkas topik tertentu.</span></button><button className="rounded-2xl bg-[#e4d9e5] p-4 text-left" onClick={() => { go("Kuis"); resetQuiz(); }}><CircleHelp size={19} className="text-[#765a73]"/><strong className="mt-3 block text-sm text-[#604c65]">Kuis latihan</strong><span className="mt-1 block text-xs text-[#8b7190]">Cek pemahaman.</span></button></div><div className="mt-5 rounded-2xl bg-[#26323a] p-4 text-white"><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#d1bda6]">FLASHCARD HARI INI</p><p className="mt-2 font-display text-xl">{["SPLDV: ax + by = c", "RPL: HTML menyusun struktur halaman", "TKJ: router menghubungkan jaringan"][flashcardIndex]}</p><div className="mt-3 flex gap-2"><Button variant="ghost" className="h-8 text-xs text-[#f6cfad]" onClick={() => setFlashcardIndex((index) => (index + 2) % 3)}>Sebelumnya</Button><Button variant="ghost" className="h-8 text-xs text-[#f6cfad]" onClick={() => setFlashcardIndex((index) => (index + 1) % 3)}>Berikutnya</Button></div>{flashcardFlipped && <p className="mt-2 text-sm text-[#d8e4dd]">Jelaskan kembali dengan kata-katamu sendiri, lalu lanjutkan ke kuis.</p>}</div>{uploadedMaterials.length > 0 && <p className="mt-4 text-xs text-[#76695e]">Materi tersimpan: {uploadedMaterials.join(", ")}</p>}</section>;
-  const achievementPages = () => <><div className="mb-8"><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">PENCAPAIAN BELAJAR</p><h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">Analitik, progres, dan penghargaan.</h1></div>{renderAnalytics()}{renderProgress()}{renderLeaderboard()}{renderCertificate()}</>;
+  const recommendation =
+    lastQuizScore <= 1
+      ? {
+          eyebrow: "PERLU DIKUATKAN",
+          title: `Ulangi konsep ${activeSubject}`,
+          text: `Skor kuis terakhir ${lastQuizScore}/${quizQuestions.length}. Mulai dari rangkuman singkat lalu coba latihan bertahap.`,
+          action: "Buka materi",
+          page: "Materi" as Page,
+        }
+      : progress < 75
+        ? {
+            eyebrow: "LANGKAH BERIKUTNYA",
+            title: `Lanjutkan ${activeSubject}`,
+            text: `Pemahamanmu sudah mulai terbentuk. Selesaikan satu sesi ${onboarding.dailyTarget || 15} menit untuk menaikkan progres.`,
+            action: "Mulai sesi",
+            page: "Materi" as Page,
+          }
+        : {
+            eyebrow: "TANTANGAN HARI INI",
+            title: "Uji pemahamanmu lagi",
+            text: `Progresmu sudah ${progress}%. Tantang dirimu dengan kuis baru agar pemahaman tetap tajam.`,
+            action: "Mulai kuis",
+            page: "Kuis" as Page,
+          };
+  const saveAiHistory = (item: AiHistoryItem) =>
+    setAiHistory(current =>
+      [item, ...current.filter(old => old.prompt !== item.prompt)].slice(0, 30)
+    );
+  const removeAiHistory = (id: string) =>
+    setAiHistory(current => current.filter(item => item.id !== id));
+  const curriculumMap: Record<
+    string,
+    { title: string; subjects: Record<string, string[]> }
+  > = {
+    TK: {
+      title: "Fondasi bermain dan mengenal dunia",
+      subjects: {
+        Bahasa: ["Mendengar cerita", "Mengenal huruf", "Bercerita sederhana"],
+        Numerasi: ["Angka 1–10", "Bentuk dan pola", "Mengelompokkan benda"],
+        Seni: ["Warna dan garis", "Bernyanyi", "Karya dari bahan sekitar"],
+      },
+    },
+    "1 SD": {
+      title: "Membaca, berhitung, dan mengenal lingkungan",
+      subjects: {
+        Matematika: [
+          "Bilangan sampai 20",
+          "Penjumlahan sederhana",
+          "Bangun datar",
+        ],
+        "Bahasa Indonesia": [
+          "Huruf dan kalimat",
+          "Menyimak cerita",
+          "Menulis permulaan",
+        ],
+        IPAS: ["Diriku dan keluarga", "Panca indera", "Lingkungan sekitar"],
+      },
+    },
+    "2 SD": {
+      title: "Pemahaman dasar dan latihan rutin",
+      subjects: {
+        Matematika: [
+          "Penjumlahan dan pengurangan",
+          "Perkalian awal",
+          "Waktu dan uang",
+        ],
+        "Bahasa Indonesia": [
+          "Membaca pemahaman",
+          "Kalimat tanya",
+          "Menulis pengalaman",
+        ],
+        IPAS: ["Makhluk hidup", "Benda dan sifatnya", "Lingkungan sehat"],
+      },
+    },
+    "3 SD": {
+      title: "Konsep dasar yang makin terstruktur",
+      subjects: {
+        Matematika: [
+          "Perkalian dan pembagian",
+          "Pecahan sederhana",
+          "Pengukuran",
+        ],
+        "Bahasa Indonesia": ["Teks informasi", "Ide pokok", "Ringkasan"],
+        IPAS: ["Siklus hidup", "Energi", "Perubahan cuaca"],
+      },
+    },
+    "4 SD": {
+      title: "Berpikir kritis dan memahami konsep",
+      subjects: {
+        Matematika: ["Pecahan dan desimal", "Bangun datar", "Pengukuran sudut"],
+        "Bahasa Indonesia": ["Ide pokok", "Wawancara", "Teks petunjuk"],
+        IPAS: ["Gaya dan energi", "Tumbuhan", "Keragaman budaya"],
+      },
+    },
+    "5 SD": {
+      title: "Penerapan konsep dalam kehidupan",
+      subjects: {
+        Matematika: ["KPK dan FPB", "Volume", "Kecepatan"],
+        "Bahasa Indonesia": ["Teks eksplanasi", "Iklan dan poster", "Pidato"],
+        IPAS: ["Ekosistem", "Siklus air", "Organ tubuh"],
+      },
+    },
+    "6 SD": {
+      title: "Persiapan jenjang SMP",
+      subjects: {
+        Matematika: ["Operasi bilangan", "Data dan diagram", "Bangun ruang"],
+        "Bahasa Indonesia": ["Laporan", "Pidato", "Literasi informasi"],
+        IPAS: ["Tata surya", "Energi", "Adaptasi makhluk hidup"],
+      },
+    },
+    SMP: {
+      title: "Fondasi sains, bahasa, dan matematika",
+      subjects: {
+        Matematika: ["Aljabar dan persamaan", "Perbandingan", "Geometri"],
+        "Bahasa Indonesia": ["Teks narasi", "Teks eksplanasi", "Teks prosedur"],
+        IPA: ["Zat dan perubahan", "Energi", "Sistem kehidupan"],
+        IPS: ["Interaksi sosial", "Peta dan geografi", "Kegiatan ekonomi"],
+      },
+    },
+    "10 SMA": {
+      title: "Fondasi berpikir ilmiah dan eksplorasi minat",
+      subjects: {
+        Matematika: ["Eksponen dan logaritma", "Persamaan kuadrat", "Fungsi"],
+        "Bahasa Indonesia": [
+          "Laporan observasi",
+          "Teks eksposisi",
+          "Karya ilmiah",
+        ],
+        "Bahasa Inggris": ["Descriptive text", "Recount text", "Expression"],
+        Biologi: ["Keanekaragaman hayati", "Virus dan bakteri", "Ekosistem"],
+        Fisika: ["Pengukuran", "Vektor", "Gerak lurus"],
+        Kimia: ["Struktur atom", "Sistem periodik", "Ikatan kimia"],
+        Sejarah: [
+          "Cara berpikir sejarah",
+          "Kerajaan Nusantara",
+          "Kolonialisme",
+        ],
+      },
+    },
+    "11 SMA": {
+      title: "Pendalaman konsep dan penerapan",
+      subjects: {
+        Matematika: ["Matriks", "Transformasi fungsi", "Barisan dan deret"],
+        "Bahasa Indonesia": ["Proposal", "Karya ilmiah", "Drama"],
+        "Bahasa Inggris": [
+          "Analytical exposition",
+          "Procedure text",
+          "Formal letter",
+        ],
+        Biologi: ["Sel", "Jaringan tumbuhan", "Sistem gerak"],
+        Fisika: ["Dinamika", "Usaha dan energi", "Fluida"],
+        Kimia: ["Termokimia", "Laju reaksi", "Kesetimbangan"],
+      },
+    },
+    "12 SMA": {
+      title: "Persiapan ujian dan masa depan",
+      subjects: {
+        Matematika: ["Limit fungsi", "Turunan", "Integral"],
+        "Bahasa Indonesia": ["Resensi", "Editorial", "Kaidah kebahasaan"],
+        "Bahasa Inggris": ["News item", "Application letter", "Review text"],
+        Biologi: ["Genetika", "Evolusi", "Bioteknologi"],
+        Fisika: ["Listrik dinamis", "Gelombang", "Fisika modern"],
+        Kimia: ["Asam basa", "Elektrokimia", "Kimia organik"],
+      },
+    },
+    "10 SMK": {
+      title: "Fondasi umum dan pengenalan dunia kerja",
+      subjects: {
+        Matematika: ["Bilangan dan aljabar", "Geometri", "Statistika"],
+        "Bahasa Indonesia": ["Teks prosedur", "Presentasi", "Laporan kerja"],
+        "Dasar-dasar Kejuruan": [
+          "Keselamatan kerja",
+          "Budaya kerja",
+          "Pengenalan konsentrasi",
+        ],
+      },
+    },
+    "11 SMK": {
+      title: "Penguatan kompetensi keahlian",
+      subjects: {
+        Matematika: ["Fungsi dan grafik", "Program linear", "Peluang"],
+        "Bahasa Inggris": [
+          "Instruction",
+          "Workplace conversation",
+          "Job description",
+        ],
+        "Dasar-dasar Kejuruan": [
+          "Proses produksi",
+          "Alat dan bahan",
+          "Dokumentasi kerja",
+        ],
+      },
+    },
+    "12 SMK": {
+      title: "Projek, sertifikasi, dan kesiapan kerja",
+      subjects: {
+        Matematika: [
+          "Statistika terapan",
+          "Matematika keuangan",
+          "Pemecahan masalah",
+        ],
+        "Bahasa Indonesia": [
+          "Proposal projek",
+          "Portofolio",
+          "Presentasi profesional",
+        ],
+        "Dasar-dasar Kejuruan": [
+          "Projek akhir",
+          "Sertifikasi kompetensi",
+          "Persiapan kerja dan usaha",
+        ],
+      },
+    },
+  };
 
-  const renderHome = () => <><section className="relative min-h-[276px] overflow-hidden rounded-[28px] bg-[#f6cfad] shadow-[0_18px_45px_rgba(153,91,54,0.12)]"><img src={character === "female" ? femaleHero : heroImage} alt="Siswa sedang belajar" className="absolute inset-0 h-full w-full object-cover object-[62%_center]" /><div className="absolute inset-0 bg-gradient-to-r from-[#f6cfad] via-[#f6cfad]/90 to-transparent" /><div className="relative z-10 max-w-[470px] p-7 sm:p-9"><div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#b66b47]/20 bg-[#fff8ed]/55 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#a65332]"><Target size={13} />Target minggu ini · 2/4</div><h1 className="font-display text-[39px] leading-[0.96] tracking-[-0.06em] text-[#26323a] sm:text-[45px]">Belajar lebih <em className="font-serif font-normal text-[#a9502f]">terarah.</em></h1><p className="mt-4 max-w-[350px] text-sm leading-relaxed text-[#755c4b]">Satu langkah kecil hari ini bisa membuat kamu lebih siap menghadapi ujian besok.</p><div className="mt-6 flex flex-wrap gap-2"><Button className="h-10 gap-2 rounded-xl bg-[#26323a] px-4 text-xs font-bold text-[#fffaf1] shadow-[0_5px_0_#172126] hover:bg-[#354750]" onClick={() => { go("Kuis"); resetQuiz(); }}><Play size={14} fill="currentColor" />Mulai kuis</Button><Button variant="outline" className="h-10 rounded-xl border-[#b66b47]/35 bg-[#fffaf1]/45 px-4 text-xs font-bold text-[#81452d] hover:bg-[#fffaf1]/80" onClick={() => go("Materi")}>Lihat semua materi</Button></div></div><div className="absolute bottom-5 right-5 hidden rounded-2xl border border-white/60 bg-[#fffaf1]/75 px-4 py-3 backdrop-blur-md sm:block"><p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#9c725b]">Fokus hari ini</p><p className="mt-1 font-display text-[18px] text-[#26323a]">SPLDV · 18 menit</p></div></section><section className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4"><div className="stat-card"><Flame className="text-[#d56537]" /><strong>{streak} hari</strong><span>Daily streak</span></div><div className="stat-card"><CheckCircle2 className="text-[#4f8875]" /><strong>12</strong><span>Materi selesai</span></div><div className="stat-card"><Trophy className="text-[#bd8b2c]" /><strong>86</strong><span>Skor kuis terakhir</span></div><div className="stat-card"><Clock3 className="text-[#806388]" /><strong>03j 20m</strong><span>Waktu belajar</span></div></section><section className="mt-6 rounded-[24px] border border-[#e4dbd0] bg-[#dceae4] p-6 shadow-[0_10px_30px_rgba(61,48,35,0.045)]"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#4f8875]">{recommendation.eyebrow}</p><h2 className="mt-2 font-display text-[27px] leading-none text-[#31584f]">{recommendation.title}</h2><p className="mt-3 max-w-xl text-sm leading-relaxed text-[#5f7c71]">{recommendation.text}</p></div><div className="rounded-2xl bg-[#f4fbf7] p-3 text-[#4f8875]"><Target size={22} /></div></div><Button className="mt-5 h-10 rounded-xl bg-[#31584f] px-4 text-xs font-bold text-white hover:bg-[#264941]" onClick={() => { go(recommendation.page); if (recommendation.page === "Kuis") resetQuiz(); }}>{recommendation.action}<ChevronRight size={14} /></Button></section><div className="mt-10 grid gap-8 xl:grid-cols-[1.55fr_0.85fr]"><section><SectionHeading eyebrow="MATERI TERAKHIR" title="Lanjutkan belajarmu" action="Semua materi" onAction={() => go("Materi")} /><div className="overflow-hidden rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card"><div className="grid md:grid-cols-[0.9fr_1.1fr]"><div className="relative min-h-[220px] overflow-hidden bg-[#d8e4dd] p-6"><img src={cardsImage} alt="Kartu belajar" className="absolute inset-0 h-full w-full object-cover mix-blend-multiply opacity-55" /><div className="relative flex h-full flex-col justify-between"><span className="w-fit rounded-full bg-[#fff9ef]/80 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#5f766a]">Matematika · Bab 2</span><div className="flex items-center justify-between"><div className="rounded-[14px] border border-[#30453f]/25 bg-[#fff9ef]/75 px-3 py-2"><p className="font-display text-[22px] text-[#30453f]">3 / 5</p><p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#668176]">Langkah</p></div><div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#426f60] bg-[#fff9ef]/80 text-sm font-bold text-[#426f60]">{progress}%</div></div></div></div><div className="p-6 sm:p-7"><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">Penjelasan bertahap</p><h3 className="mt-2 font-display text-[25px] leading-[1.02] tracking-[-0.035em] text-[#26323a]">Persamaan Linear<br />Dua Variabel</h3><p className="mt-4 text-sm leading-relaxed text-[#8e8174]">Kamu sudah memahami bentuk umum. Yuk lanjut ke cara menemukan titik potongnya.</p><div className="mt-5 flex items-center justify-between text-xs font-bold text-[#8c7d6e]"><span>Progres materi</span><span className="text-[#c4613b]">{progress}%</span></div><div className="mt-2"><ProgressBar value={progress} /></div><Button disabled={targetCompletedToday} className="mt-6 h-10 gap-2 rounded-xl bg-[#26323a] px-4 text-xs font-bold text-[#fffaf1] hover:bg-[#3b4b55] disabled:opacity-60" onClick={() => markStudy(true)}><Play size={14} fill="currentColor" />{targetCompletedToday ? "Target hari ini selesai" : "Tandai target selesai"}</Button></div></div></div></section><section><SectionHeading eyebrow="KEBIASAAN BAIK" title="Streak kamu" /><div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card"><div className="flex items-center justify-between rounded-2xl bg-[#f4ede4] px-4 py-3"><div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fae3cf] text-[#d56537]"><Flame size={19} /></div><div><p className="text-xs font-bold text-[#4b423a]">{streak} hari berturut-turut</p><p className="mt-0.5 text-[11px] text-[#9a8e81]">Target berikutnya: 7 hari</p></div></div><span className="font-display text-2xl text-[#d56537]">{Math.min(Math.round((streak / 7) * 100), 100)}%</span></div><div className="mt-5"><ProgressBar value={Math.min((streak / 7) * 100, 100)} color="bg-[#e97848]" /></div><div className="mt-5 grid grid-cols-7 gap-1.5 text-center">{["S","S","R","K","J","S","M"].map((day, index) => <div key={`${day}-${index}`} className={`rounded-lg py-2 text-[10px] font-bold ${index < Math.min(streak, 7) ? "bg-[#e97848] text-white" : "bg-[#f1e9e0] text-[#a99b8d]"}`}>{day}</div>)}</div><Button variant="ghost" className="mt-4 h-9 w-full rounded-xl text-xs font-bold text-[#b75c39] hover:bg-[#f7eee5]" onClick={() => go("Progres")}>Lihat progres lengkap <ChevronRight size={14} /></Button></div></section></div><section className="mt-10"><SectionHeading eyebrow="REKOMENDASI" title="Belajar tanpa terasa berat" action="Lihat semua" onAction={() => go("Materi")} /><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">{materials.map((item) => <MaterialCard key={item.id} material={item} saved={saved.includes(item.id)} onSave={() => toggleSave(item.id)} onOpen={() => setSelectedMaterial(item)} />)}</div></section><section className="mt-10 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]"><div className="rounded-[24px] bg-[#26323a] p-6 text-[#fffaf1] shadow-[0_12px_30px_rgba(38,50,58,0.13)] sm:p-7"><div className="flex items-start justify-between gap-5"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#d1bda6]">CEK PEMAHAMAN</p><h3 className="mt-2 font-display text-[28px] leading-none tracking-[-0.04em]">Uji pemahamanmu.</h3><p className="mt-3 max-w-[400px] text-sm leading-relaxed text-[#c6c5b9]">Kuis diambil langsung dari materi SPLDV di laporan dan memberikan pembahasan untuk setiap jawaban.</p></div><CircleHelp className="hidden text-[#f6cfad] sm:block" size={45} /></div><Button className="mt-6 h-10 gap-2 rounded-xl bg-[#f6cfad] px-4 text-xs font-bold text-[#70402d] hover:bg-[#ffe0c6]" onClick={() => { go("Kuis"); resetQuiz(); }}>Mulai kuis <ChevronRight size={14} /></Button></div><div className="rounded-[24px] border border-[#e4dbd0] bg-[#f6e6bd] p-6 shadow-[0_10px_30px_rgba(61,48,35,0.045)] sm:p-7"><Lightbulb className="text-[#b78729]" size={22} /><p className="mt-6 font-serif text-[23px] leading-[1.1] text-[#6f5526]">“Tidak apa-apa kalau belum paham. Yang penting, kamu tahu langkah berikutnya.”</p><p className="mt-4 text-xs font-bold text-[#a47c2c]">— prinsip belajar mandiri</p></div></section></>;
+  const selectedCurriculum =
+    curriculumMap[curriculumLevel] || curriculumMap["1 SD"];
+  const curriculumSubjects = Object.keys(selectedCurriculum.subjects);
+  const activeCurriculumSubject = selectedCurriculum.subjects[curriculumSubject]
+    ? curriculumSubject
+    : curriculumSubjects[0];
+  const selectCurriculumLevel = (level: string) => {
+    setCurriculumLevel(level);
+    localStorage.setItem("belajar_curriculum_level", level);
+    const nextSubjects = Object.keys(curriculumMap[level].subjects);
+    setCurriculumSubject(nextSubjects[0]);
+    setLibraryGrade(level);
+  };
 
-  const renderLibrary = () => { const subjectMaterials = [...materials, ...vocationalMaterials].filter((item) => item.subject === activeSubject); const filteredSubjectMaterials = subjectMaterials.filter((item) => (libraryChapter === "Semua bab" || item.title.toLowerCase().includes(libraryChapter.toLowerCase()) || item.description.toLowerCase().includes(libraryChapter.toLowerCase()))); const bankQuestions = activeSubject === "Rekayasa Perangkat Lunak" ? [{ q: "Tag HTML yang digunakan untuk membuat tautan adalah...", options: ["<a>", "<img>", "<table>", "<form>"], answer: 0, explanation: "Elemen <a> atau anchor digunakan untuk membuat hyperlink pada halaman web." }, { q: "Urutan logis langkah penyelesaian masalah sebelum coding disebut...", options: ["Algoritma", "Database", "Browser", "Bandwidth"], answer: 0, explanation: "Algoritma adalah urutan langkah logis dan terstruktur untuk menyelesaikan masalah." }] : activeSubject === "Teknik Komputer dan Jaringan" ? [{ q: "Perangkat yang menghubungkan beberapa jaringan berbeda adalah...", options: ["Router", "Keyboard", "Monitor", "Scanner"], answer: 0, explanation: "Router meneruskan paket data antarjaringan berdasarkan alamat IP." }, { q: "IP address digunakan untuk...", options: ["Mengidentifikasi perangkat dalam jaringan", "Mencetak dokumen", "Mengubah ukuran layar", "Mengisi daya laptop"], answer: 0, explanation: "IP address menjadi alamat identitas perangkat agar dapat berkomunikasi di jaringan." }] : [{ q: `Konsep dasar ${activeSubject} yang paling tepat untuk dipelajari terlebih dahulu adalah...`, options: ["Definisi dan contoh", "Menghafal semua rumus", "Langsung mengerjakan soal sulit", "Melewati rangkuman"], answer: 0, explanation: "Mulai dari definisi dan contoh agar konsep dasar terbentuk." }, { q: `Strategi belajar ${activeSubject} yang efektif adalah...`, options: ["Belajar tanpa jeda", "Membaca, mencoba, lalu mengevaluasi", "Hanya menonton video", "Menghafal jawaban"], answer: 1, explanation: "Siklus membaca, mencoba, dan mengevaluasi membantu pemahaman lebih kuat." }]; return <><div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">PERPUSTAKAAN PERSONAL</p><h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">Materi dan latihan.</h1><p className="mt-3 max-w-xl text-sm leading-relaxed text-[#8e8174]">Konten disesuaikan dengan jenjang dan mata pelajaran aktifmu.</p></div><div className="flex gap-2"><select value={libraryGrade} onChange={(event) => setLibraryGrade(event.target.value)} className="h-10 rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e]">{educationOptions.map((option) => <option key={option} value={option}>{option}</option>)}</select><select value={activeSubject} onChange={(event) => setActiveSubject(event.target.value)} className="h-10 max-w-[170px] rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e]">{selectableSubjects.map((subject) => <option key={subject}>{subject}</option>)}</select></div></div><div className="rounded-[24px] bg-[#26323a] p-6 text-[#fffaf1] sm:p-8"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#d1bda6]">REKOMENDASI UNTUK {libraryGrade}</p><h2 className="mt-3 font-display text-[32px] leading-none">{activeSubject} untuk dipahami.</h2><p className="mt-3 max-w-xl text-sm leading-relaxed text-[#c6c5b9]">Mulai dari materi inti, gunakan contoh yang dekat dengan keseharian, lalu cek pemahaman lewat bank soal.</p></div><div className="rounded-2xl bg-[#f6cfad] px-4 py-3 text-center text-[#70402d]"><BookOpen size={19} className="mx-auto" /><p className="mt-2 text-[10px] font-bold uppercase">{subjectMaterials.length || 1} materi aktif</p></div></div></div><div className="mt-6 grid gap-4 md:grid-cols-2">{(filteredSubjectMaterials).map((item) => <MaterialCard key={item.id} material={item} saved={saved.includes(item.id)} onSave={() => toggleSave(item.id)} onOpen={() => setSelectedMaterial(item)} />)}</div><div className="mt-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-6 dark-card"><div className="flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">BANK SOAL INTERAKTIF</p><h2 className="mt-2 font-display text-[27px]">Cek pemahaman {activeSubject}.</h2></div><Badge className="rounded-full bg-[#f5e5d5] text-[#a65332] hover:bg-[#f5e5d5]">{libraryGrade}</Badge></div><p className="mt-3 text-sm text-[#8e8174]">{bankQuestions[0].q}</p><div className="mt-5 grid gap-2 sm:grid-cols-2">{bankQuestions[0].options.map((option, index) => <button key={option} onClick={() => !bankSubmitted && setBankAnswer(index)} className={`rounded-xl border p-3 text-left text-xs font-semibold ${bankAnswer === index ? "border-[#e97848] bg-[#fff0e6] text-[#a65332]" : "border-[#e6ddd3] bg-[#fffaf1] text-[#6f6256]"}`}>{String.fromCharCode(65 + index)}. {option}</button>)}</div>{bankSubmitted && <div className={`mt-4 rounded-xl p-4 text-xs leading-relaxed ${bankAnswer === bankQuestions[0].answer ? "bg-[#e3f0ea] text-[#456e63]" : "bg-[#f8e5d8] text-[#8e4c32]"}`}><strong>{bankAnswer === bankQuestions[0].answer ? "Benar!" : "Belum tepat."}</strong> {bankQuestions[0].explanation}</div>}<Button disabled={bankAnswer === null} className="mt-5 h-10 rounded-xl bg-[#26323a] text-xs font-bold text-white hover:bg-[#3b4b55]" onClick={() => { setBankSubmitted(true); if (bankAnswer === bankQuestions[0].answer) toast.success("Jawaban benar!"); }}>Periksa jawaban <ChevronRight size={15} /></Button></div></>; };
+  const curriculumRoadmap = (
+    <section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5 dark-card">
+      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">
+        PETA KURIKULUM RUNTUT
+      </p>
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="font-display text-[27px] leading-none text-[#26323a]">
+            Pelajaran per kelas dan bab.
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm text-[#8e8174]">
+            Pilih jenjang, kelas, lalu mapel. Setiap mapel punya urutan bab yang
+            bisa kamu pelajari satu per satu.
+          </p>
+        </div>
+        <select
+          value={curriculumLevel}
+          onChange={event => selectCurriculumLevel(event.target.value)}
+          className="h-10 rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e]"
+        >
+          {Object.keys(curriculumMap).map(level => (
+            <option key={level} value={level}>
+              {level === "TK"
+                ? "TK"
+                : level.includes("SD")
+                  ? `Kelas ${level}`
+                  : level}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="mt-5 rounded-2xl bg-[#e3f0ea] p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-bold uppercase text-[#456e63]">
+              {curriculumLevel}
+            </p>
+            <h3 className="mt-2 font-display text-xl text-[#31584f]">
+              {selectedCurriculum.title}
+            </h3>
+          </div>
+          <Badge className="rounded-full bg-[#fffaf1] text-[#456e63] hover:bg-[#fffaf1]">
+            {curriculumSubjects.length} mapel
+          </Badge>
+        </div>
+        <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+          {curriculumSubjects.map(subject => (
+            <button
+              key={subject}
+              type="button"
+              onClick={() => setCurriculumSubject(subject)}
+              className={`whitespace-nowrap rounded-full px-3 py-2 text-xs font-bold transition ${activeCurriculumSubject === subject ? "bg-[#26323a] text-white" : "bg-white/70 text-[#456e63] hover:bg-white"}`}
+            >
+              {subject}
+            </button>
+          ))}
+        </div>
+        <div className="mt-4 grid gap-2 md:grid-cols-3">
+          {selectedCurriculum.subjects[activeCurriculumSubject].map(
+            (chapter, index) => (
+              <div
+                key={chapter}
+                className="rounded-xl bg-white/70 p-3 text-xs font-bold text-[#456e63]"
+              >
+                <span className="mr-2 text-[#a65332]">Bab {index + 1}</span>
+                {chapter}
+              </div>
+            )
+          )}
+        </div>
+      </div>
+    </section>
+  );
+  const videoCatalog = (
+    <section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5">
+      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">
+        VIDEO PER BAB
+      </p>
+      <h2 className="mt-2 font-display text-[27px] leading-none text-[#26323a]">
+        Rekomendasi video berdasarkan bab.
+      </h2>
+      <div className="mt-5 grid gap-3 md:grid-cols-3">
+        <article className="rounded-2xl bg-[#f6e2d5] p-4">
+          <p className="text-[10px] font-bold text-[#a65332]">
+            MATEMATIKA · ALJABAR
+          </p>
+          <p className="mt-2 text-sm font-bold text-[#70402d]">
+            Kelas X Kurikulum Merdeka
+          </p>
+          <a
+            className="mt-3 inline-block rounded-lg bg-[#a65332] px-3 py-2 text-[11px] font-bold text-white"
+            href="https://www.youtube.com/watch?v=IDRlYbeX734"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Tonton
+          </a>
+        </article>
+        <article className="rounded-2xl bg-[#e3f0ea] p-4">
+          <p className="text-[10px] font-bold text-[#456e63]">
+            RPL · WEB DASAR
+          </p>
+          <p className="mt-2 text-sm font-bold text-[#31584f]">
+            Teknologi Aplikasi Web SMK
+          </p>
+          <a
+            className="mt-3 inline-block rounded-lg bg-[#31584f] px-3 py-2 text-[11px] font-bold text-white"
+            href="https://www.youtube.com/watch?v=dfVp3FFZotA"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Tonton
+          </a>
+        </article>
+        <article className="rounded-2xl bg-[#f0e4bc] p-4">
+          <p className="text-[10px] font-bold text-[#8d6c27]">
+            BUKU · SEMUA JENJANG
+          </p>
+          <p className="mt-2 text-sm font-bold text-[#6f5526]">
+            Buku digital per kelas dan mapel
+          </p>
+          <a
+            className="mt-3 inline-block rounded-lg bg-[#8d6c27] px-3 py-2 text-[11px] font-bold text-white"
+            href="https://buku.kemendikdasmen.go.id/katalog"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Buka SIBI
+          </a>
+        </article>
+      </div>
+    </section>
+  );
+  const expandedVideoCatalog = (
+    <section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5">
+      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">
+        KATALOG VIDEO PER MAPEL
+      </p>
+      <h2 className="mt-2 font-display text-[27px] leading-none text-[#26323a]">
+        Bab lanjutan untuk SD, SMP, SMA, dan SMK.
+      </h2>
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          {
+            subject: "Bahasa Indonesia",
+            chapter: "Teks dan literasi",
+            url: "https://www.youtube.com/results?search_query=materi+Bahasa+Indonesia+Kurikulum+Merdeka",
+          },
+          {
+            subject: "IPA",
+            chapter: "Energi dan makhluk hidup",
+            url: "https://www.youtube.com/results?search_query=materi+IPA+Kurikulum+Merdeka",
+          },
+          {
+            subject: "Bahasa Inggris",
+            chapter: "Descriptive text",
+            url: "https://www.youtube.com/results?search_query=materi+Bahasa+Inggris+SMA+Kurikulum+Merdeka",
+          },
+          {
+            subject: "TKJ",
+            chapter: "Jaringan dasar",
+            url: "https://www.youtube.com/results?search_query=materi+TKJ+jaringan+dasar+SMK",
+          },
+        ].map(video => (
+          <a
+            key={video.subject}
+            href={video.url}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-2xl bg-[#f4ede4] p-4 transition hover:-translate-y-0.5"
+          >
+            <p className="text-[10px] font-bold uppercase text-[#a65332]">
+              {video.subject}
+            </p>
+            <p className="mt-2 text-sm font-bold text-[#26323a]">
+              {video.chapter}
+            </p>
+            <p className="mt-3 text-[11px] font-bold text-[#a65332]">
+              Cari video bab →
+            </p>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+  const resourceShelf = (
+    <section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card">
+      <div>
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">
+          PERPUSTAKAAN BELAJAR
+        </p>
+        <h2 className="mt-2 font-display text-[27px] leading-none text-[#26323a]">
+          Video YouTube dan buku pelajaran.
+        </h2>
+        <p className="mt-3 text-sm text-[#8e8174]">
+          Materi kurikulum disediakan oleh platform. Pengguna juga tetap bisa
+          mengunggah materi pribadi untuk dipelajari bersama AI.
+        </p>
+      </div>
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
+        <article className="rounded-2xl bg-[#f6e2d5] p-5">
+          <Play className="text-[#a65332]" size={21} />
+          <h3 className="mt-3 font-display text-xl text-[#70402d]">
+            Video YouTube terpilih
+          </h3>
+          <p className="mt-2 text-xs leading-relaxed text-[#9a6d58]">
+            Video Matematika kelas X Kurikulum Merdeka dan pengantar RPL untuk
+            memahami materi melalui penjelasan visual.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <a
+              className="rounded-xl bg-[#a65332] px-3 py-2 text-xs font-bold text-white"
+              href="https://www.youtube.com/watch?v=IDRlYbeX734"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Video Matematika
+            </a>
+            <a
+              className="rounded-xl border border-[#d8b09c] px-3 py-2 text-xs font-bold text-[#a65332]"
+              href="https://www.youtube.com/watch?v=dfVp3FFZotA"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Video RPL
+            </a>
+          </div>
+        </article>
+        <article className="rounded-2xl bg-[#e3f0ea] p-5">
+          <BookOpen className="text-[#456e63]" size={21} />
+          <h3 className="mt-3 font-display text-xl text-[#31584f]">
+            Buku pelajaran resmi
+          </h3>
+          <p className="mt-2 text-xs leading-relaxed text-[#668176]">
+            Akses buku digital SMA/SMK dari SIBI, platform resmi Pusat
+            Perbukuan. Pilih jenjang dan mapel sesuai kebutuhan.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <a
+              className="rounded-xl bg-[#31584f] px-3 py-2 text-xs font-bold text-white"
+              href="https://buku.kemendikdasmen.go.id/katalog"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Buka katalog SIBI
+            </a>
+            <a
+              className="rounded-xl border border-[#a8c8ba] px-3 py-2 text-xs font-bold text-[#456e63]"
+              href="https://buku.kemendikdasmen.go.id/katalog/buku-kurikulum-merdeka"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Kurikulum Merdeka
+            </a>
+          </div>
+        </article>
+      </div>
+    </section>
+  );
+  const aiWorkspace = (
+    <section className="mb-8 grid gap-5 lg:grid-cols-[220px_1fr]">
+      <aside className="rounded-[22px] border border-[#e4dbd0] bg-[#fffdf9] p-4">
+        <div className="flex items-center gap-2 text-sm font-bold text-[#26323a]">
+          <History size={16} className="text-[#a65332]" />
+          Riwayat AI
+        </div>
+        <p className="mt-2 text-xs leading-relaxed text-[#8e8174]">
+          Pertanyaan, ringkasan, dan kuis yang pernah dibuat.
+        </p>
+        <div className="mt-5 space-y-2">
+          <button className="w-full rounded-xl bg-[#f6e2d5] px-3 py-2 text-left text-xs font-bold text-[#a65332]">
+            SMA · Materi umum
+          </button>
+          <button className="w-full rounded-xl bg-[#e3f0ea] px-3 py-2 text-left text-xs font-bold text-[#456e63]">
+            SMK · Materi umum
+          </button>
+          <button className="w-full rounded-xl border border-[#e4dbd0] px-3 py-2 text-left text-xs font-bold text-[#76695e]">
+            Kejuruan · Opsional
+          </button>
+        </div>
+      </aside>
+      <div className="rounded-[24px] bg-[#26323a] p-5 text-white">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#d1bda6]">
+          RUANG TANYA AI
+        </p>
+        <h2 className="mt-2 font-display text-[27px] leading-none">
+          Tanyakan materi apa saja.
+        </h2>
+        <p className="mt-3 text-sm text-[#c6c5b9]">
+          AI membantu menjelaskan materi SMA dan SMK yang sama. Pilihan kejuruan
+          hanya digunakan jika pengguna ingin belajar RPL, TKJ, atau bidang
+          lain.
+        </p>
+        <div className="mt-4 flex gap-2">
+          <Input
+            value={aiQuestion}
+            onChange={event => setAiQuestion(event.target.value)}
+            placeholder="Contoh: jelaskan SPLDV dengan sederhana"
+            className="h-11 border-0 bg-white/10 text-sm text-white placeholder:text-white/50"
+          />
+          <Button
+            className="h-11 bg-[#f6cfad] text-xs font-bold text-[#26323a] hover:bg-[#eebd97]"
+            onClick={() => {
+              if (!aiQuestion.trim()) return;
+              setAiAnswer(
+                `Pertanyaan tentang ${aiQuestion.trim()} disimpan. Asisten AI akan melanjutkan penjelasan sesuai mapel aktif.`
+              );
+              setAiQuestion("");
+              toast.success("Pertanyaan disimpan ke riwayat AI.");
+            }}
+          >
+            Tanya AI
+          </Button>
+        </div>
+        {aiAnswer && (
+          <p className="mt-3 rounded-xl bg-white/10 p-3 text-sm text-[#e8e2d9]">
+            {aiAnswer}
+          </p>
+        )}
+        <p className="mt-4 text-xs text-[#c6c5b9]">
+          Asisten AI berbentuk tombol mengambang tetap tersedia di pojok kanan
+          bawah.
+        </p>
+      </div>
+    </section>
+  );
+  const aiAskRoom = (
+    <section className="mb-8 rounded-[24px] bg-[#26323a] p-5 text-white">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#d1bda6]">
+            TANYA AI + RIWAYAT
+          </p>
+          <h2 className="mt-2 font-display text-[27px] leading-none">
+            Tanyakan apa saja tentang materi.
+          </h2>
+          <p className="mt-3 text-sm text-[#c6c5b9]">
+            Pertanyaan dan jawaban terbaru tersimpan di halaman AI Belajar.
+            Asisten AI di pojok tetap tersedia.
+          </p>
+        </div>
+        <History className="text-[#f6cfad]" size={22} />
+      </div>
+      <div className="mt-4 flex gap-2">
+        <Input
+          value={aiQuestion}
+          onChange={event => setAiQuestion(event.target.value)}
+          placeholder="Contoh: jelaskan subnetting dengan sederhana"
+          className="h-11 border-0 bg-white/10 text-sm text-white placeholder:text-white/50"
+        />
+        <Button
+          className="h-11 bg-[#f6cfad] text-xs font-bold text-[#26323a] hover:bg-[#eebd97]"
+          onClick={() => {
+            if (!aiQuestion.trim()) return;
+            setAiAnswer(
+              `Pertanyaanmu tentang ${aiQuestion.trim()} sudah dicatat. Buka AI Belajar untuk melanjutkan penjelasan dan melihat riwayatnya.`
+            );
+            setAiQuestion("");
+            toast.success("Pertanyaan disimpan ke riwayat AI.");
+          }}
+        >
+          Tanya
+        </Button>
+      </div>
+      {aiAnswer && (
+        <p className="mt-3 rounded-xl bg-white/10 p-3 text-sm text-[#e8e2d9]">
+          {aiAnswer}
+        </p>
+      )}
+      <Button
+        variant="ghost"
+        className="mt-3 h-8 text-xs text-[#f6cfad]"
+        onClick={() => go("AI Belajar")}
+      >
+        Buka AI Belajar dan riwayat <ChevronRight size={14} />
+      </Button>
+    </section>
+  );
+  const learningToolkit = (
+    <section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">
+            RUANG BELAJAR
+          </p>
+          <h2 className="mt-2 font-display text-[27px] leading-none text-[#26323a]">
+            Video, flashcard, kuis, dan ringkasan.
+          </h2>
+          <p className="mt-3 text-sm text-[#8e8174]">
+            Guru dapat mengunggah materi untuk dipelajari dengan beberapa cara.
+          </p>
+        </div>
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#26323a] px-4 py-2.5 text-xs font-bold text-white">
+          <Plus size={14} />
+          Upload materi
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
+            className="hidden"
+            onChange={event => {
+              const file = event.target.files?.[0];
+              if (file) {
+                setUploadedMaterials(items =>
+                  [file.name, ...items].slice(0, 10)
+                );
+                setGeneratedMaterials(items =>
+                  [
+                    {
+                      name: file.name,
+                      summary: `Ringkasan otomatis: pahami konsep inti, istilah penting, contoh, dan langkah latihan dari ${file.name}.`,
+                      quiz: `Kuis kustom: apa konsep utama dalam ${file.name}? Jelaskan dengan contoh sederhana.`,
+                    },
+                    ...items,
+                  ].slice(0, 10)
+                );
+                toast.success("AI membuat ringkasan dan kuis dari materi.");
+              }
+            }}
+          />
+        </label>
+      </div>
+      <div className="mt-5 grid gap-3 sm:grid-cols-4">
+        <button
+          className="rounded-2xl bg-[#f6e2d5] p-4 text-left"
+          onClick={() =>
+            toast.info(
+              "Tambahkan tautan video pada materi untuk mulai menonton."
+            )
+          }
+        >
+          <Play size={19} className="text-[#a65332]" />
+          <strong className="mt-3 block text-sm text-[#70402d]">
+            Video pembelajaran
+          </strong>
+          <span className="mt-1 block text-xs text-[#9a6d58]">
+            Visual dan audio.
+          </span>
+        </button>
+        <button
+          className="rounded-2xl bg-[#e3f0ea] p-4 text-left"
+          onClick={() => setFlashcardFlipped(value => !value)}
+        >
+          <BookOpen size={19} className="text-[#456e63]" />
+          <strong className="mt-3 block text-sm text-[#31584f]">
+            Flashcard
+          </strong>
+          <span className="mt-1 block text-xs text-[#668176]">
+            {flashcardFlipped ? "Jawaban tampil" : "Balik kartu konsep"}
+          </span>
+        </button>
+        <button
+          className="rounded-2xl bg-[#f0e4bc] p-4 text-left"
+          onClick={() => go("AI Belajar")}
+        >
+          <Sparkles size={19} className="text-[#8d6c27]" />
+          <strong className="mt-3 block text-sm text-[#6f5526]">
+            Ringkasan AI
+          </strong>
+          <span className="mt-1 block text-xs text-[#947a39]">
+            Ringkas topik tertentu.
+          </span>
+        </button>
+        <button
+          className="rounded-2xl bg-[#e4d9e5] p-4 text-left"
+          onClick={() => {
+            go("Kuis");
+            resetQuiz();
+          }}
+        >
+          <CircleHelp size={19} className="text-[#765a73]" />
+          <strong className="mt-3 block text-sm text-[#604c65]">
+            Kuis latihan
+          </strong>
+          <span className="mt-1 block text-xs text-[#8b7190]">
+            Cek pemahaman.
+          </span>
+        </button>
+      </div>
+      <div className="mt-5 rounded-2xl bg-[#26323a] p-4 text-white">
+        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#d1bda6]">
+          FLASHCARD HARI INI
+        </p>
+        <p className="mt-2 font-display text-xl">
+          {
+            [
+              "SPLDV: ax + by = c",
+              "RPL: HTML menyusun struktur halaman",
+              "TKJ: router menghubungkan jaringan",
+            ][flashcardIndex]
+          }
+        </p>
+        <div className="mt-3 flex gap-2">
+          <Button
+            variant="ghost"
+            className="h-8 text-xs text-[#f6cfad]"
+            onClick={() => setFlashcardIndex(index => (index + 2) % 3)}
+          >
+            Sebelumnya
+          </Button>
+          <Button
+            variant="ghost"
+            className="h-8 text-xs text-[#f6cfad]"
+            onClick={() => setFlashcardIndex(index => (index + 1) % 3)}
+          >
+            Berikutnya
+          </Button>
+        </div>
+        {flashcardFlipped && (
+          <p className="mt-2 text-sm text-[#d8e4dd]">
+            Jelaskan kembali dengan kata-katamu sendiri, lalu lanjutkan ke kuis.
+          </p>
+        )}
+      </div>
+      {uploadedMaterials.length > 0 && (
+        <p className="mt-4 text-xs text-[#76695e]">
+          Materi tersimpan: {uploadedMaterials.join(", ")}
+        </p>
+      )}
+    </section>
+  );
+  const achievementPages = () => (
+    <>
+      <div className="mb-8">
+        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">
+          PENCAPAIAN BELAJAR
+        </p>
+        <h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">
+          Analitik, progres, dan penghargaan.
+        </h1>
+      </div>
+      {renderAnalytics()}
+      {renderProgress()}
+      {renderLeaderboard()}
+      {renderCertificate()}
+    </>
+  );
 
-  const renderMaterials = () => <><div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">PERPUSTAKAAN BELAJAR</p><h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">Cari materi yang <em className="font-serif font-normal text-[#b75c39]">pas.</em></h1><p className="mt-3 max-w-xl text-sm leading-relaxed text-[#8e8174]">Rangkuman, penjelasan bertahap, latihan, dan sumber referensi dalam satu alur.</p></div><div className="relative w-full sm:w-[240px]"><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#a99b8e]" /><Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Cari materi..." className="h-10 rounded-xl border-[#e3d9ce] bg-[#fffaf1] pl-9 text-xs" /></div></div><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">{visibleMaterials.map((item) => <MaterialCard key={item.id} material={item} saved={saved.includes(item.id)} onSave={() => toggleSave(item.id)} onOpen={() => setSelectedMaterial(item)} />)}</div></>;
+  const renderHome = () => (
+    <>
+      <section className="relative min-h-[276px] overflow-hidden rounded-[28px] bg-[#f6cfad] shadow-[0_18px_45px_rgba(153,91,54,0.12)]">
+        <img
+          src={character === "female" ? femaleHero : heroImage}
+          alt="Siswa sedang belajar"
+          className="absolute inset-0 h-full w-full object-cover object-[62%_center]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#f6cfad] via-[#f6cfad]/90 to-transparent" />
+        <div className="relative z-10 max-w-[470px] p-7 sm:p-9">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#b66b47]/20 bg-[#fff8ed]/55 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#a65332]">
+            <Target size={13} />
+            Target minggu ini · 2/4
+          </div>
+          <h1 className="font-display text-[39px] leading-[0.96] tracking-[-0.06em] text-[#26323a] sm:text-[45px]">
+            Belajar lebih{" "}
+            <em className="font-serif font-normal text-[#a9502f]">terarah.</em>
+          </h1>
+          <p className="mt-4 max-w-[350px] text-sm leading-relaxed text-[#755c4b]">
+            Satu langkah kecil hari ini bisa membuat kamu lebih siap menghadapi
+            ujian besok.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            <Button
+              className="h-10 gap-2 rounded-xl bg-[#26323a] px-4 text-xs font-bold text-[#fffaf1] shadow-[0_5px_0_#172126] hover:bg-[#354750]"
+              onClick={() => {
+                go("Kuis");
+                resetQuiz();
+              }}
+            >
+              <Play size={14} fill="currentColor" />
+              Mulai kuis
+            </Button>
+            <Button
+              variant="outline"
+              className="h-10 rounded-xl border-[#b66b47]/35 bg-[#fffaf1]/45 px-4 text-xs font-bold text-[#81452d] hover:bg-[#fffaf1]/80"
+              onClick={() => go("Materi")}
+            >
+              Lihat semua materi
+            </Button>
+          </div>
+        </div>
+        <div className="absolute bottom-5 right-5 hidden rounded-2xl border border-white/60 bg-[#fffaf1]/75 px-4 py-3 backdrop-blur-md sm:block">
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#9c725b]">
+            Fokus hari ini
+          </p>
+          <p className="mt-1 font-display text-[18px] text-[#26323a]">
+            SPLDV · 18 menit
+          </p>
+        </div>
+      </section>
+      <section className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="stat-card">
+          <Flame className="text-[#d56537]" />
+          <strong>{streak} hari</strong>
+          <span>Daily streak</span>
+        </div>
+        <div className="stat-card">
+          <CheckCircle2 className="text-[#4f8875]" />
+          <strong>12</strong>
+          <span>Materi selesai</span>
+        </div>
+        <div className="stat-card">
+          <Trophy className="text-[#bd8b2c]" />
+          <strong>86</strong>
+          <span>Skor kuis terakhir</span>
+        </div>
+        <div className="stat-card">
+          <Clock3 className="text-[#806388]" />
+          <strong>03j 20m</strong>
+          <span>Waktu belajar</span>
+        </div>
+      </section>
+      <section className="mt-6 rounded-[24px] border border-[#e4dbd0] bg-[#dceae4] p-6 shadow-[0_10px_30px_rgba(61,48,35,0.045)]">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#4f8875]">
+              {recommendation.eyebrow}
+            </p>
+            <h2 className="mt-2 font-display text-[27px] leading-none text-[#31584f]">
+              {recommendation.title}
+            </h2>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#5f7c71]">
+              {recommendation.text}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-[#f4fbf7] p-3 text-[#4f8875]">
+            <Target size={22} />
+          </div>
+        </div>
+        <Button
+          className="mt-5 h-10 rounded-xl bg-[#31584f] px-4 text-xs font-bold text-white hover:bg-[#264941]"
+          onClick={() => {
+            go(recommendation.page);
+            if (recommendation.page === "Kuis") resetQuiz();
+          }}
+        >
+          {recommendation.action}
+          <ChevronRight size={14} />
+        </Button>
+      </section>
+      <div className="mt-10 grid gap-8 xl:grid-cols-[1.55fr_0.85fr]">
+        <section>
+          <SectionHeading
+            eyebrow="MATERI TERAKHIR"
+            title="Lanjutkan belajarmu"
+            action="Semua materi"
+            onAction={() => go("Materi")}
+          />
+          <div className="overflow-hidden rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card">
+            <div className="grid md:grid-cols-[0.9fr_1.1fr]">
+              <div className="relative min-h-[220px] overflow-hidden bg-[#d8e4dd] p-6">
+                <img
+                  src={cardsImage}
+                  alt="Kartu belajar"
+                  className="absolute inset-0 h-full w-full object-cover mix-blend-multiply opacity-55"
+                />
+                <div className="relative flex h-full flex-col justify-between">
+                  <span className="w-fit rounded-full bg-[#fff9ef]/80 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#5f766a]">
+                    Matematika · Bab 2
+                  </span>
+                  <div className="flex items-center justify-between">
+                    <div className="rounded-[14px] border border-[#30453f]/25 bg-[#fff9ef]/75 px-3 py-2">
+                      <p className="font-display text-[22px] text-[#30453f]">
+                        3 / 5
+                      </p>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#668176]">
+                        Langkah
+                      </p>
+                    </div>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#426f60] bg-[#fff9ef]/80 text-sm font-bold text-[#426f60]">
+                      {progress}%
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="p-6 sm:p-7">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">
+                  Penjelasan bertahap
+                </p>
+                <h3 className="mt-2 font-display text-[25px] leading-[1.02] tracking-[-0.035em] text-[#26323a]">
+                  Persamaan Linear
+                  <br />
+                  Dua Variabel
+                </h3>
+                <p className="mt-4 text-sm leading-relaxed text-[#8e8174]">
+                  Kamu sudah memahami bentuk umum. Yuk lanjut ke cara menemukan
+                  titik potongnya.
+                </p>
+                <div className="mt-5 flex items-center justify-between text-xs font-bold text-[#8c7d6e]">
+                  <span>Progres materi</span>
+                  <span className="text-[#c4613b]">{progress}%</span>
+                </div>
+                <div className="mt-2">
+                  <ProgressBar value={progress} />
+                </div>
+                <Button
+                  disabled={targetCompletedToday}
+                  className="mt-6 h-10 gap-2 rounded-xl bg-[#26323a] px-4 text-xs font-bold text-[#fffaf1] hover:bg-[#3b4b55] disabled:opacity-60"
+                  onClick={() => markStudy(true)}
+                >
+                  <Play size={14} fill="currentColor" />
+                  {targetCompletedToday
+                    ? "Target hari ini selesai"
+                    : "Tandai target selesai"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section>
+          <SectionHeading eyebrow="KEBIASAAN BAIK" title="Streak kamu" />
+          <div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card">
+            <div className="flex items-center justify-between rounded-2xl bg-[#f4ede4] px-4 py-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fae3cf] text-[#d56537]">
+                  <Flame size={19} />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-[#4b423a]">
+                    {streak} hari berturut-turut
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-[#9a8e81]">
+                    Target berikutnya: 7 hari
+                  </p>
+                </div>
+              </div>
+              <span className="font-display text-2xl text-[#d56537]">
+                {Math.min(Math.round((streak / 7) * 100), 100)}%
+              </span>
+            </div>
+            <div className="mt-5">
+              <ProgressBar
+                value={Math.min((streak / 7) * 100, 100)}
+                color="bg-[#e97848]"
+              />
+            </div>
+            <div className="mt-5 grid grid-cols-7 gap-1.5 text-center">
+              {["S", "S", "R", "K", "J", "S", "M"].map((day, index) => (
+                <div
+                  key={`${day}-${index}`}
+                  className={`rounded-lg py-2 text-[10px] font-bold ${index < Math.min(streak, 7) ? "bg-[#e97848] text-white" : "bg-[#f1e9e0] text-[#a99b8d]"}`}
+                >
+                  {day}
+                </div>
+              ))}
+            </div>
+            <Button
+              variant="ghost"
+              className="mt-4 h-9 w-full rounded-xl text-xs font-bold text-[#b75c39] hover:bg-[#f7eee5]"
+              onClick={() => go("Progres")}
+            >
+              Lihat progres lengkap <ChevronRight size={14} />
+            </Button>
+          </div>
+        </section>
+      </div>
+      <section className="mt-10">
+        <SectionHeading
+          eyebrow="REKOMENDASI"
+          title="Belajar tanpa terasa berat"
+          action="Lihat semua"
+          onAction={() => go("Materi")}
+        />
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {materials.map(item => (
+            <MaterialCard
+              key={item.id}
+              material={item}
+              saved={saved.includes(item.id)}
+              onSave={() => toggleSave(item.id)}
+              onOpen={() => setSelectedMaterial(item)}
+            />
+          ))}
+        </div>
+      </section>
+      <section className="mt-10 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="rounded-[24px] bg-[#26323a] p-6 text-[#fffaf1] shadow-[0_12px_30px_rgba(38,50,58,0.13)] sm:p-7">
+          <div className="flex items-start justify-between gap-5">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#d1bda6]">
+                CEK PEMAHAMAN
+              </p>
+              <h3 className="mt-2 font-display text-[28px] leading-none tracking-[-0.04em]">
+                Uji pemahamanmu.
+              </h3>
+              <p className="mt-3 max-w-[400px] text-sm leading-relaxed text-[#c6c5b9]">
+                Kuis diambil langsung dari materi SPLDV di laporan dan
+                memberikan pembahasan untuk setiap jawaban.
+              </p>
+            </div>
+            <CircleHelp className="hidden text-[#f6cfad] sm:block" size={45} />
+          </div>
+          <Button
+            className="mt-6 h-10 gap-2 rounded-xl bg-[#f6cfad] px-4 text-xs font-bold text-[#70402d] hover:bg-[#ffe0c6]"
+            onClick={() => {
+              go("Kuis");
+              resetQuiz();
+            }}
+          >
+            Mulai kuis <ChevronRight size={14} />
+          </Button>
+        </div>
+        <div className="rounded-[24px] border border-[#e4dbd0] bg-[#f6e6bd] p-6 shadow-[0_10px_30px_rgba(61,48,35,0.045)] sm:p-7">
+          <Lightbulb className="text-[#b78729]" size={22} />
+          <p className="mt-6 font-serif text-[23px] leading-[1.1] text-[#6f5526]">
+            “Tidak apa-apa kalau belum paham. Yang penting, kamu tahu langkah
+            berikutnya.”
+          </p>
+          <p className="mt-4 text-xs font-bold text-[#a47c2c]">
+            — prinsip belajar mandiri
+          </p>
+        </div>
+      </section>
+    </>
+  );
 
-  const renderQuiz = () => <><div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">LATIHAN INTERAKTIF</p><h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">Kuis dari materi.</h1><p className="mt-3 max-w-xl text-sm leading-relaxed text-[#8e8174]">Setiap jawaban salah dilengkapi pembahasan agar kamu tahu letak konsep yang perlu diperbaiki.</p></div><Badge className="rounded-full bg-[#f5e5d5] px-3 py-2 text-[10px] font-bold text-[#a65332] hover:bg-[#f5e5d5]"><BookOpen size={13} />SPLDV · 4 soal</Badge></div>{!quizStarted ? <div className="grid gap-5 lg:grid-cols-[1fr_0.75fr]"><div className="rounded-[24px] bg-[#26323a] p-7 text-[#fffaf1]"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e97848]"><CircleHelp size={24} /></div><h2 className="mt-8 font-display text-[34px] leading-none tracking-[-0.05em]">Siap cek pemahaman?</h2><p className="mt-4 max-w-md text-sm leading-relaxed text-[#c6c5b9]">Jawab 4 pertanyaan dari materi Persamaan Linear Dua Variabel. Kamu akan mendapat pembahasan setelah setiap jawaban.</p><div className="mt-7 flex flex-wrap gap-3"><Button className="h-10 rounded-xl bg-[#f6cfad] px-5 text-xs font-bold text-[#70402d] hover:bg-[#ffe0c6]" onClick={resetQuiz}>Mulai kuis <ChevronRight size={15} /></Button><span className="flex items-center gap-1.5 text-xs text-[#b6c2bf]"><Clock3 size={14} />± 5 menit</span></div></div><div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-7 dark-card"><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">RUTE KUIS</p><div className="mt-6 space-y-4">{["Pahami bentuk umum SPLDV", "Gunakan substitusi sederhana", "Baca grafik dan titik potong", "Pilih metode penyelesaian"].map((label, index) => <div key={label} className="flex items-center gap-3"><span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f4e5d5] text-xs font-bold text-[#a65332]">{index + 1}</span><span className="text-sm font-semibold text-[#6f6256]">{label}</span></div>)}</div></div></div> : quizFinished ? <div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-8 text-center dark-card"><div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#f6e6bd] text-[#bd8b2c]"><Trophy size={36} /></div><p className="mt-6 font-display text-[50px] leading-none tracking-[-0.06em] text-[#26323a]">{Math.round((quizScore / quizQuestions.length) * 100)}</p><p className="mt-2 text-xs font-bold uppercase tracking-[0.16em] text-[#a49384]">Skor kuis kamu</p><p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-[#8e8174]">Kamu menjawab {quizScore} dari {quizQuestions.length} soal dengan benar. Teruskan latihan untuk menjaga streak dan membuka lencana.</p><div className="mt-7 flex justify-center gap-2"><Button className="h-10 rounded-xl bg-[#26323a] px-5 text-xs font-bold text-white hover:bg-[#3b4b55]" onClick={resetQuiz}>Ulangi kuis</Button><Button variant="outline" className="h-10 rounded-xl border-[#ded2c5] bg-transparent text-xs font-bold text-[#76695e]" onClick={() => go("Progres")}>Lihat progres</Button></div></div> : <div className="mx-auto max-w-2xl rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-6 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card"><div className="flex items-center justify-between"><Badge className="rounded-full bg-[#f5e5d5] px-3 py-1 text-[10px] font-bold text-[#a65332] hover:bg-[#f5e5d5]">PERTANYAAN {quizIndex + 1} / {quizQuestions.length}</Badge><span className="text-xs font-bold text-[#a49384]">Skor sementara: {quizScore}</span></div><div className="mt-5"><ProgressBar value={((quizIndex + 1) / quizQuestions.length) * 100} /></div><h2 className="mt-8 font-display text-[29px] leading-tight tracking-[-0.04em] text-[#26323a]">{quizQuestions[quizIndex].question}</h2><div className="mt-6 space-y-2.5">{quizQuestions[quizIndex].options.map((option, index) => <button key={option} className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left text-sm font-semibold transition ${answer === index ? "border-[#e97848] bg-[#fff0e6] text-[#a65332]" : "border-[#e6ddd3] bg-[#fffaf1] text-[#6f6256] hover:border-[#ddb198]"} ${submitted && index === quizQuestions[quizIndex].answer ? "border-[#6e9e8e] bg-[#e3f0ea] text-[#456e63]" : ""}`} onClick={() => !submitted && setAnswer(index)}><span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${answer === index ? "bg-[#e97848] text-white" : "bg-[#eee6dc] text-[#9a8e81]"}`}>{String.fromCharCode(65 + index)}</span>{option}{submitted && index === quizQuestions[quizIndex].answer && <Check size={16} className="ml-auto text-[#4f8875]" />}</button>)}</div>{submitted && <div className={`mt-5 rounded-2xl p-4 text-sm leading-relaxed ${answer === quizQuestions[quizIndex].answer ? "bg-[#e3f0ea] text-[#456e63]" : "bg-[#f8e5d8] text-[#8e4c32]"}`}><p className="font-bold">{answer === quizQuestions[quizIndex].answer ? "Jawaban benar!" : "Belum tepat — ini pembahasannya:"}</p><p className="mt-1">{quizQuestions[quizIndex].explanation}</p><p className="mt-2 text-[11px] font-semibold opacity-75">{quizQuestions[quizIndex].source}</p></div>}<Button disabled={answer === null} className="mt-6 h-11 w-full rounded-xl bg-[#26323a] text-xs font-bold text-white hover:bg-[#3b4b55]" onClick={submitAnswer}>{submitted ? (quizIndex === quizQuestions.length - 1 ? "Lihat hasil" : "Soal berikutnya") : "Periksa jawaban"}<ChevronRight size={15} /></Button></div>}</>;
+  const renderLibrary = () => {
+    const subjectMaterials = [...materials, ...vocationalMaterials].filter(
+      item => item.subject === activeSubject
+    );
+    const filteredSubjectMaterials = subjectMaterials.filter(
+      item =>
+        libraryChapter === "Semua bab" ||
+        item.title.toLowerCase().includes(libraryChapter.toLowerCase()) ||
+        item.description.toLowerCase().includes(libraryChapter.toLowerCase())
+    );
+    const bankQuestions =
+      activeSubject === "Rekayasa Perangkat Lunak"
+        ? [
+            {
+              q: "Tag HTML yang digunakan untuk membuat tautan adalah...",
+              options: ["<a>", "<img>", "<table>", "<form>"],
+              answer: 0,
+              explanation:
+                "Elemen <a> atau anchor digunakan untuk membuat hyperlink pada halaman web.",
+            },
+            {
+              q: "Urutan logis langkah penyelesaian masalah sebelum coding disebut...",
+              options: ["Algoritma", "Database", "Browser", "Bandwidth"],
+              answer: 0,
+              explanation:
+                "Algoritma adalah urutan langkah logis dan terstruktur untuk menyelesaikan masalah.",
+            },
+          ]
+        : activeSubject === "Teknik Komputer dan Jaringan"
+          ? [
+              {
+                q: "Perangkat yang menghubungkan beberapa jaringan berbeda adalah...",
+                options: ["Router", "Keyboard", "Monitor", "Scanner"],
+                answer: 0,
+                explanation:
+                  "Router meneruskan paket data antarjaringan berdasarkan alamat IP.",
+              },
+              {
+                q: "IP address digunakan untuk...",
+                options: [
+                  "Mengidentifikasi perangkat dalam jaringan",
+                  "Mencetak dokumen",
+                  "Mengubah ukuran layar",
+                  "Mengisi daya laptop",
+                ],
+                answer: 0,
+                explanation:
+                  "IP address menjadi alamat identitas perangkat agar dapat berkomunikasi di jaringan.",
+              },
+            ]
+          : [
+              {
+                q: `Konsep dasar ${activeSubject} yang paling tepat untuk dipelajari terlebih dahulu adalah...`,
+                options: [
+                  "Definisi dan contoh",
+                  "Menghafal semua rumus",
+                  "Langsung mengerjakan soal sulit",
+                  "Melewati rangkuman",
+                ],
+                answer: 0,
+                explanation:
+                  "Mulai dari definisi dan contoh agar konsep dasar terbentuk.",
+              },
+              {
+                q: `Strategi belajar ${activeSubject} yang efektif adalah...`,
+                options: [
+                  "Belajar tanpa jeda",
+                  "Membaca, mencoba, lalu mengevaluasi",
+                  "Hanya menonton video",
+                  "Menghafal jawaban",
+                ],
+                answer: 1,
+                explanation:
+                  "Siklus membaca, mencoba, dan mengevaluasi membantu pemahaman lebih kuat.",
+              },
+            ];
+    return (
+      <>
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">
+              PERPUSTAKAAN PERSONAL
+            </p>
+            <h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">
+              Materi dan latihan.
+            </h1>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#8e8174]">
+              Konten disesuaikan dengan jenjang dan mata pelajaran aktifmu.
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <select
+              value={libraryGrade}
+              onChange={event => setLibraryGrade(event.target.value)}
+              className="h-10 rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e]"
+            >
+              {educationOptions.map(option => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            <select
+              value={activeSubject}
+              onChange={event => setActiveSubject(event.target.value)}
+              className="h-10 max-w-[170px] rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e]"
+            >
+              {selectableSubjects.map(subject => (
+                <option key={subject}>{subject}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="rounded-[24px] bg-[#26323a] p-6 text-[#fffaf1] sm:p-8">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#d1bda6]">
+                REKOMENDASI UNTUK {libraryGrade}
+              </p>
+              <h2 className="mt-3 font-display text-[32px] leading-none">
+                {activeSubject} untuk dipahami.
+              </h2>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#c6c5b9]">
+                Mulai dari materi inti, gunakan contoh yang dekat dengan
+                keseharian, lalu cek pemahaman lewat bank soal.
+              </p>
+            </div>
+            <div className="rounded-2xl bg-[#f6cfad] px-4 py-3 text-center text-[#70402d]">
+              <BookOpen size={19} className="mx-auto" />
+              <p className="mt-2 text-[10px] font-bold uppercase">
+                {subjectMaterials.length || 1} materi aktif
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {filteredSubjectMaterials.map(item => (
+            <MaterialCard
+              key={item.id}
+              material={item}
+              saved={saved.includes(item.id)}
+              onSave={() => toggleSave(item.id)}
+              onOpen={() => setSelectedMaterial(item)}
+            />
+          ))}
+        </div>
+        <div className="mt-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-6 dark-card">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">
+                BANK SOAL INTERAKTIF
+              </p>
+              <h2 className="mt-2 font-display text-[27px]">
+                Cek pemahaman {activeSubject}.
+              </h2>
+            </div>
+            <Badge className="rounded-full bg-[#f5e5d5] text-[#a65332] hover:bg-[#f5e5d5]">
+              {libraryGrade}
+            </Badge>
+          </div>
+          <p className="mt-3 text-sm text-[#8e8174]">{bankQuestions[0].q}</p>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2">
+            {bankQuestions[0].options.map((option, index) => (
+              <button
+                key={option}
+                onClick={() => !bankSubmitted && setBankAnswer(index)}
+                className={`rounded-xl border p-3 text-left text-xs font-semibold ${bankAnswer === index ? "border-[#e97848] bg-[#fff0e6] text-[#a65332]" : "border-[#e6ddd3] bg-[#fffaf1] text-[#6f6256]"}`}
+              >
+                {String.fromCharCode(65 + index)}. {option}
+              </button>
+            ))}
+          </div>
+          {bankSubmitted && (
+            <div
+              className={`mt-4 rounded-xl p-4 text-xs leading-relaxed ${bankAnswer === bankQuestions[0].answer ? "bg-[#e3f0ea] text-[#456e63]" : "bg-[#f8e5d8] text-[#8e4c32]"}`}
+            >
+              <strong>
+                {bankAnswer === bankQuestions[0].answer
+                  ? "Benar!"
+                  : "Belum tepat."}
+              </strong>{" "}
+              {bankQuestions[0].explanation}
+            </div>
+          )}
+          <Button
+            disabled={bankAnswer === null}
+            className="mt-5 h-10 rounded-xl bg-[#26323a] text-xs font-bold text-white hover:bg-[#3b4b55]"
+            onClick={() => {
+              setBankSubmitted(true);
+              if (bankAnswer === bankQuestions[0].answer)
+                toast.success("Jawaban benar!");
+            }}
+          >
+            Periksa jawaban <ChevronRight size={15} />
+          </Button>
+        </div>
+      </>
+    );
+  };
 
-  const renderAnalytics = () => { const series = [Math.max(progress - 28, 24), Math.max(progress - 12, 35), Math.max(progress - 38, 18), Math.min(progress + 4, 100), Math.max(progress - 20, 42), Math.min(progress + 10, 100), Math.min(progress + 15, 100)]; const labels = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"]; const completedTargets = Math.min(streak, 7); return <><div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">RINGKASAN PERFORMA</p><h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">Analitik belajarmu</h1><p className="mt-3 max-w-xl text-sm leading-relaxed text-[#8e8174]">Lihat pola belajar, konsistensi streak, dan target yang sudah kamu selesaikan.</p></div><Badge className="rounded-full bg-[#e3f0ea] px-3 py-2 text-[10px] font-bold text-[#456e63] hover:bg-[#e3f0ea]">Mapel aktif · {activeSubject}</Badge></div><div className="grid grid-cols-2 gap-3 lg:grid-cols-4"><div className="stat-card"><Clock3 className="text-[#806388]" /><strong>03j 20m</strong><span>Total waktu belajar</span></div><div className="stat-card"><Target className="text-[#e97848]" /><strong>{completedTargets}/7</strong><span>Target minggu ini</span></div><div className="stat-card"><Flame className="text-[#d56537]" /><strong>{streak} hari</strong><span>Streak saat ini</span></div><div className="stat-card"><Trophy className="text-[#bd8b2c]" /><strong>86</strong><span>Rata-rata kuis</span></div></div><div className="mt-6 grid gap-5 xl:grid-cols-[1.45fr_0.8fr]"><div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-6 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card"><div className="flex items-start justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">AKTIVITAS 7 HARI</p><h2 className="mt-2 font-display text-[27px]">Waktu belajar per hari</h2></div><span className="rounded-full bg-[#f8e5d8] px-3 py-1.5 text-[10px] font-bold text-[#a65332]">Target {onboarding.dailyTarget || 15} menit</span></div><div className="mt-8 flex h-[220px] items-end gap-2 border-b border-[#eee5dc] px-1 sm:gap-4">{series.map((value, index) => <div key={labels[index]} className="flex h-full flex-1 flex-col items-center justify-end gap-2"><div className="w-full max-w-[42px] rounded-t-xl bg-gradient-to-t from-[#e97848] to-[#f6cfad] transition-all" style={{ height: `${value}%` }} title={`${value}% aktivitas`} /><span className="text-[10px] font-bold text-[#9a8e81]">{labels[index]}</span></div>)}</div><div className="mt-4 flex items-center gap-2 text-[10px] font-semibold text-[#9a8e81]"><span className="h-2 w-2 rounded-full bg-[#e97848]" />Persentase pencapaian target harian</div></div><div className="rounded-[24px] bg-[#dceae4] p-6"><div className="flex items-center gap-2 text-[#4f8875]"><Flame size={19} /><span className="text-[10px] font-bold uppercase tracking-[0.18em]">RIWAYAT STREAK</span></div><h2 className="mt-5 font-display text-[31px] leading-none text-[#31584f]">{streak} hari</h2><p className="mt-2 text-xs text-[#5f7c71]">Konsistensi belajar terakhir</p><div className="mt-7 grid grid-cols-7 gap-1.5">{["S", "S", "R", "K", "J", "S", "M"].map((day, index) => <div key={`${day}-${index}`} className={`rounded-lg py-3 text-center text-[10px] font-bold ${index < completedTargets ? "bg-[#4f8875] text-white" : "bg-[#f4fbf7] text-[#8aa99e]"}`}>{day}<span className="mt-1 block text-[8px] font-normal">{index < completedTargets ? "✓" : "·"}</span></div>)}</div><p className="mt-6 text-xs leading-relaxed text-[#5f7c71]">Selesaikan satu sesi lagi untuk menjaga ritme dan mendekati target 7 hari.</p></div></div><div className="mt-5 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-6 dark-card"><div className="flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">TARGET SELESAI</p><h2 className="mt-2 font-display text-[27px]">Progress minggu ini</h2></div><span className="font-display text-3xl text-[#e97848]">{Math.round((completedTargets / 7) * 100)}%</span></div><div className="mt-5"><ProgressBar value={(completedTargets / 7) * 100} /></div><div className="mt-5 grid gap-3 sm:grid-cols-3"><div className="rounded-2xl bg-[#f4ede4] p-4"><CheckCircle2 className="text-[#4f8875]" size={18} /><p className="mt-3 text-xs font-bold text-[#6f6256]">{completedTargets} target selesai</p><p className="mt-1 text-[10px] text-[#9a8e81]">dari 7 target mingguan</p></div><div className="rounded-2xl bg-[#f4ede4] p-4"><BookOpen className="text-[#a65332]" size={18} /><p className="mt-3 text-xs font-bold text-[#6f6256]">12 materi selesai</p><p className="mt-1 text-[10px] text-[#9a8e81]">teruskan progresmu</p></div><div className="rounded-2xl bg-[#f4ede4] p-4"><Zap className="text-[#bd8b2c]" size={18} /><p className="mt-3 text-xs font-bold text-[#6f6256]">4 lencana terbuka</p><p className="mt-1 text-[10px] text-[#9a8e81]">koleksi pencapaianmu</p></div></div></div></>; };
+  const renderMaterials = () => (
+    <>
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">
+            PERPUSTAKAAN BELAJAR
+          </p>
+          <h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">
+            Cari materi yang{" "}
+            <em className="font-serif font-normal text-[#b75c39]">pas.</em>
+          </h1>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#8e8174]">
+            Rangkuman, penjelasan bertahap, latihan, dan sumber referensi dalam
+            satu alur.
+          </p>
+        </div>
+        <div className="relative w-full sm:w-[240px]">
+          <Search
+            size={15}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#a99b8e]"
+          />
+          <Input
+            value={search}
+            onChange={event => setSearch(event.target.value)}
+            placeholder="Cari materi..."
+            className="h-10 rounded-xl border-[#e3d9ce] bg-[#fffaf1] pl-9 text-xs"
+          />
+        </div>
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {visibleMaterials.map(item => (
+          <MaterialCard
+            key={item.id}
+            material={item}
+            saved={saved.includes(item.id)}
+            onSave={() => toggleSave(item.id)}
+            onOpen={() => setSelectedMaterial(item)}
+          />
+        ))}
+      </div>
+    </>
+  );
 
-  const renderCalendar = () => { const targetDays = [24, 26, 28]; const selected = Number(localStorage.getItem("belajar_selected_day") || "24"); const setSelected = (day: number) => { localStorage.setItem("belajar_selected_day", String(day)); setPage("Kalender"); toast.success(`Target tanggal ${day} Juni dipilih.`); }; return <><div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">TARGET DAN PENGINGAT</p><h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">Kalender belajar</h1><p className="mt-3 text-sm leading-relaxed text-[#8e8174]">Atur ritme yang realistis supaya daily streak tetap terjaga.</p></div><Button className="h-10 gap-2 rounded-xl bg-[#e97848] px-4 text-xs font-bold text-white hover:bg-[#c85d35]" onClick={() => { void enableNotifications(); }}><Bell size={15} />Aktifkan pengingat</Button></div><div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]"><div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card"><div className="flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">JADWAL BULANAN</p><h2 className="mt-2 font-display text-[26px]">Juni 2024</h2></div><div className="flex gap-1"><Button variant="outline" className="h-8 w-8 rounded-lg border-[#ded2c5] bg-transparent p-0 text-[#8e8174]">‹</Button><Button variant="outline" className="h-8 w-8 rounded-lg border-[#ded2c5] bg-transparent p-0 text-[#8e8174]">›</Button></div></div><div className="mt-6 grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-[#a49384]">{["Min","Sen","Sel","Rab","Kam","Jum","Sab"].map((day) => <span key={day} className="py-2">{day}</span>)}{Array.from({ length: 6 }, (_, index) => <span key={`empty-${index}`} />)}{Array.from({ length: 30 }, (_, index) => { const day = index + 1; const isTarget = targetDays.includes(day); const isSelected = day === selected; return <button key={day} onClick={() => setSelected(day)} className={`relative flex h-10 items-center justify-center rounded-xl text-xs font-bold transition ${isSelected ? "bg-[#26323a] text-white" : isTarget ? "bg-[#f8e1d3] text-[#a65332] hover:bg-[#f3cfbc]" : "text-[#75695e] hover:bg-[#f4ede4]"}`}>{day}{isTarget && <span className="absolute bottom-1 h-1 w-1 rounded-full bg-[#e97848]" />}</button>; })}</div><div className="mt-5 flex flex-wrap gap-4 text-[10px] font-bold text-[#9a8e81]"><span className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-[#e97848]" />Target belajar</span><span className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-[#26323a]" />Dipilih</span></div></div><div className="space-y-5"><div className="rounded-[24px] bg-[#dceae4] p-6"><div className="flex items-center justify-between"><div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#f4fbf7] text-[#4f8875]"><Target size={21} /></div><span className="rounded-full bg-[#f4fbf7] px-3 py-1.5 text-[10px] font-bold text-[#4f8875]">{onboarding.dailyTarget || 15} menit / hari</span></div><h3 className="mt-7 font-display text-[28px] leading-none text-[#31584f]">Target hari {selected}</h3><p className="mt-3 text-sm leading-relaxed text-[#5f7c71]">Fokus pada satu materi, lanjutkan dengan latihan singkat, lalu catat progresnya.</p><Button className="mt-6 h-10 rounded-xl bg-[#31584f] px-4 text-xs font-bold text-white hover:bg-[#264941]" onClick={() => { markStudy(true); toast.success("Target hari ini ditandai selesai."); }}>Tandai selesai</Button></div><div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-6 dark-card"><div className="flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">PENGINGAT HARIAN</p><h3 className="mt-2 font-display text-[24px]">Belajar setiap {onboarding.reminderTime || "19:00"}</h3></div><button aria-label="Aktifkan atau matikan pengingat" className={`relative h-7 w-12 rounded-full transition ${onboarding.reminderEnabled ? "bg-[#e97848]" : "bg-[#d9d0c6]"}`} onClick={() => setOnboarding({ ...onboarding, reminderEnabled: !onboarding.reminderEnabled })}><span className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${onboarding.reminderEnabled ? "left-6" : "left-1"}`} /></button></div><p className="mt-3 text-xs leading-relaxed text-[#8e8174]">Pengingat tersimpan untuk perangkat ini. Waktu dapat diubah kapan saja.</p><Input type="time" value={onboarding.reminderTime || "19:00"} onChange={(event) => setOnboarding({ ...onboarding, reminderTime: event.target.value })} className="mt-4 h-10 rounded-xl border-[#e1d6ca] bg-[#fffaf1] text-xs" /></div></div></div></>; };
+  const renderQuiz = () => (
+    <>
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">
+            LATIHAN INTERAKTIF
+          </p>
+          <h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">
+            Kuis dari materi.
+          </h1>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#8e8174]">
+            Setiap jawaban salah dilengkapi pembahasan agar kamu tahu letak
+            konsep yang perlu diperbaiki.
+          </p>
+        </div>
+        <Badge className="rounded-full bg-[#f5e5d5] px-3 py-2 text-[10px] font-bold text-[#a65332] hover:bg-[#f5e5d5]">
+          <BookOpen size={13} />
+          SPLDV · 4 soal
+        </Badge>
+      </div>
+      {!quizStarted ? (
+        <div className="grid gap-5 lg:grid-cols-[1fr_0.75fr]">
+          <div className="rounded-[24px] bg-[#26323a] p-7 text-[#fffaf1]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e97848]">
+              <CircleHelp size={24} />
+            </div>
+            <h2 className="mt-8 font-display text-[34px] leading-none tracking-[-0.05em]">
+              Siap cek pemahaman?
+            </h2>
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-[#c6c5b9]">
+              Jawab 4 pertanyaan dari materi Persamaan Linear Dua Variabel. Kamu
+              akan mendapat pembahasan setelah setiap jawaban.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Button
+                className="h-10 rounded-xl bg-[#f6cfad] px-5 text-xs font-bold text-[#70402d] hover:bg-[#ffe0c6]"
+                onClick={resetQuiz}
+              >
+                Mulai kuis <ChevronRight size={15} />
+              </Button>
+              <span className="flex items-center gap-1.5 text-xs text-[#b6c2bf]">
+                <Clock3 size={14} />± 5 menit
+              </span>
+            </div>
+          </div>
+          <div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-7 dark-card">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">
+              RUTE KUIS
+            </p>
+            <div className="mt-6 space-y-4">
+              {[
+                "Pahami bentuk umum SPLDV",
+                "Gunakan substitusi sederhana",
+                "Baca grafik dan titik potong",
+                "Pilih metode penyelesaian",
+              ].map((label, index) => (
+                <div key={label} className="flex items-center gap-3">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#f4e5d5] text-xs font-bold text-[#a65332]">
+                    {index + 1}
+                  </span>
+                  <span className="text-sm font-semibold text-[#6f6256]">
+                    {label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : quizFinished ? (
+        <div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-8 text-center dark-card">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#f6e6bd] text-[#bd8b2c]">
+            <Trophy size={36} />
+          </div>
+          <p className="mt-6 font-display text-[50px] leading-none tracking-[-0.06em] text-[#26323a]">
+            {Math.round((quizScore / quizQuestions.length) * 100)}
+          </p>
+          <p className="mt-2 text-xs font-bold uppercase tracking-[0.16em] text-[#a49384]">
+            Skor kuis kamu
+          </p>
+          <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-[#8e8174]">
+            Kamu menjawab {quizScore} dari {quizQuestions.length} soal dengan
+            benar. Teruskan latihan untuk menjaga streak dan membuka lencana.
+          </p>
+          <div className="mt-7 flex justify-center gap-2">
+            <Button
+              className="h-10 rounded-xl bg-[#26323a] px-5 text-xs font-bold text-white hover:bg-[#3b4b55]"
+              onClick={resetQuiz}
+            >
+              Ulangi kuis
+            </Button>
+            <Button
+              variant="outline"
+              className="h-10 rounded-xl border-[#ded2c5] bg-transparent text-xs font-bold text-[#76695e]"
+              onClick={() => go("Progres")}
+            >
+              Lihat progres
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="mx-auto max-w-2xl rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-6 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card">
+          <div className="flex items-center justify-between">
+            <Badge className="rounded-full bg-[#f5e5d5] px-3 py-1 text-[10px] font-bold text-[#a65332] hover:bg-[#f5e5d5]">
+              PERTANYAAN {quizIndex + 1} / {quizQuestions.length}
+            </Badge>
+            <span className="text-xs font-bold text-[#a49384]">
+              Skor sementara: {quizScore}
+            </span>
+          </div>
+          <div className="mt-5">
+            <ProgressBar
+              value={((quizIndex + 1) / quizQuestions.length) * 100}
+            />
+          </div>
+          <h2 className="mt-8 font-display text-[29px] leading-tight tracking-[-0.04em] text-[#26323a]">
+            {quizQuestions[quizIndex].question}
+          </h2>
+          <div className="mt-6 space-y-2.5">
+            {quizQuestions[quizIndex].options.map((option, index) => (
+              <button
+                key={option}
+                className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left text-sm font-semibold transition ${answer === index ? "border-[#e97848] bg-[#fff0e6] text-[#a65332]" : "border-[#e6ddd3] bg-[#fffaf1] text-[#6f6256] hover:border-[#ddb198]"} ${submitted && index === quizQuestions[quizIndex].answer ? "border-[#6e9e8e] bg-[#e3f0ea] text-[#456e63]" : ""}`}
+                onClick={() => !submitted && setAnswer(index)}
+              >
+                <span
+                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${answer === index ? "bg-[#e97848] text-white" : "bg-[#eee6dc] text-[#9a8e81]"}`}
+                >
+                  {String.fromCharCode(65 + index)}
+                </span>
+                {option}
+                {submitted && index === quizQuestions[quizIndex].answer && (
+                  <Check size={16} className="ml-auto text-[#4f8875]" />
+                )}
+              </button>
+            ))}
+          </div>
+          {submitted && (
+            <div
+              className={`mt-5 rounded-2xl p-4 text-sm leading-relaxed ${answer === quizQuestions[quizIndex].answer ? "bg-[#e3f0ea] text-[#456e63]" : "bg-[#f8e5d8] text-[#8e4c32]"}`}
+            >
+              <p className="font-bold">
+                {answer === quizQuestions[quizIndex].answer
+                  ? "Jawaban benar!"
+                  : "Belum tepat — ini pembahasannya:"}
+              </p>
+              <p className="mt-1">{quizQuestions[quizIndex].explanation}</p>
+              <p className="mt-2 text-[11px] font-semibold opacity-75">
+                {quizQuestions[quizIndex].source}
+              </p>
+            </div>
+          )}
+          <Button
+            disabled={answer === null}
+            className="mt-6 h-11 w-full rounded-xl bg-[#26323a] text-xs font-bold text-white hover:bg-[#3b4b55]"
+            onClick={submitAnswer}
+          >
+            {submitted
+              ? quizIndex === quizQuestions.length - 1
+                ? "Lihat hasil"
+                : "Soal berikutnya"
+              : "Periksa jawaban"}
+            <ChevronRight size={15} />
+          </Button>
+        </div>
+      )}
+    </>
+  );
 
-  const renderAiHistory = () => <><div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">TERSIMPAN OTOMATIS</p><h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">Riwayat AI</h1><p className="mt-3 max-w-xl text-sm leading-relaxed text-[#8e8174]">Buka kembali ringkasan, kuis kustom, dan jawaban yang pernah kamu minta.</p></div><Badge className="rounded-full bg-[#e3f0ea] px-3 py-2 text-[10px] font-bold text-[#456e63] hover:bg-[#e3f0ea]">{aiHistory.length} tersimpan</Badge></div>{aiHistory.length === 0 ? <div className="rounded-[24px] border border-dashed border-[#d8cabe] bg-[#fffdf9] p-10 text-center dark-card"><History className="mx-auto text-[#b89f8f]" size={32} /><h2 className="mt-4 font-display text-[25px]">Belum ada riwayat AI</h2><p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[#8e8174]">Minta ringkasan atau kuis kustom dari Asisten Belajar. Hasilnya akan tersimpan di sini.</p></div> : <div className="grid gap-4 md:grid-cols-2">{aiHistory.map((item) => <article key={item.id} className="rounded-[22px] border border-[#e4dbd0] bg-[#fffdf9] p-5 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card"><div className="flex items-center justify-between gap-3"><Badge className={`rounded-full px-3 py-1 text-[10px] font-bold hover:opacity-90 ${item.kind === "Ringkasan" ? "bg-[#f5e5d5] text-[#a65332]" : item.kind === "Kuis" ? "bg-[#e3f0ea] text-[#456e63]" : "bg-[#e7deea] text-[#604c65]"}`}>{item.kind} · {item.topic}</Badge><button aria-label="Hapus riwayat AI" className="text-[#b7a69a] hover:text-[#be4f3d]" onClick={() => removeAiHistory(item.id)}><X size={15} /></button></div><h2 className="mt-4 font-display text-[21px] leading-tight text-[#26323a]">{item.prompt}</h2><p className="mt-3 max-h-28 overflow-hidden whitespace-pre-line text-xs leading-relaxed text-[#76695e]">{item.answer}</p><p className="mt-4 text-[10px] font-semibold text-[#b0a094]">{new Date(item.createdAt).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}</p></article>)}</div>}</>;
+  const renderAnalytics = () => {
+    const series = [
+      Math.max(progress - 28, 24),
+      Math.max(progress - 12, 35),
+      Math.max(progress - 38, 18),
+      Math.min(progress + 4, 100),
+      Math.max(progress - 20, 42),
+      Math.min(progress + 10, 100),
+      Math.min(progress + 15, 100),
+    ];
+    const labels = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+    const completedTargets = Math.min(streak, 7);
+    return (
+      <>
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">
+              RINGKASAN PERFORMA
+            </p>
+            <h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">
+              Analitik belajarmu
+            </h1>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#8e8174]">
+              Lihat pola belajar, konsistensi streak, dan target yang sudah kamu
+              selesaikan.
+            </p>
+          </div>
+          <Badge className="rounded-full bg-[#e3f0ea] px-3 py-2 text-[10px] font-bold text-[#456e63] hover:bg-[#e3f0ea]">
+            Mapel aktif · {activeSubject}
+          </Badge>
+        </div>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div className="stat-card">
+            <Clock3 className="text-[#806388]" />
+            <strong>03j 20m</strong>
+            <span>Total waktu belajar</span>
+          </div>
+          <div className="stat-card">
+            <Target className="text-[#e97848]" />
+            <strong>{completedTargets}/7</strong>
+            <span>Target minggu ini</span>
+          </div>
+          <div className="stat-card">
+            <Flame className="text-[#d56537]" />
+            <strong>{streak} hari</strong>
+            <span>Streak saat ini</span>
+          </div>
+          <div className="stat-card">
+            <Trophy className="text-[#bd8b2c]" />
+            <strong>86</strong>
+            <span>Rata-rata kuis</span>
+          </div>
+        </div>
+        <div className="mt-6 grid gap-5 xl:grid-cols-[1.45fr_0.8fr]">
+          <div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-6 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">
+                  AKTIVITAS 7 HARI
+                </p>
+                <h2 className="mt-2 font-display text-[27px]">
+                  Waktu belajar per hari
+                </h2>
+              </div>
+              <span className="rounded-full bg-[#f8e5d8] px-3 py-1.5 text-[10px] font-bold text-[#a65332]">
+                Target {onboarding.dailyTarget || 15} menit
+              </span>
+            </div>
+            <div className="mt-8 flex h-[220px] items-end gap-2 border-b border-[#eee5dc] px-1 sm:gap-4">
+              {series.map((value, index) => (
+                <div
+                  key={labels[index]}
+                  className="flex h-full flex-1 flex-col items-center justify-end gap-2"
+                >
+                  <div
+                    className="w-full max-w-[42px] rounded-t-xl bg-gradient-to-t from-[#e97848] to-[#f6cfad] transition-all"
+                    style={{ height: `${value}%` }}
+                    title={`${value}% aktivitas`}
+                  />
+                  <span className="text-[10px] font-bold text-[#9a8e81]">
+                    {labels[index]}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 flex items-center gap-2 text-[10px] font-semibold text-[#9a8e81]">
+              <span className="h-2 w-2 rounded-full bg-[#e97848]" />
+              Persentase pencapaian target harian
+            </div>
+          </div>
+          <div className="rounded-[24px] bg-[#dceae4] p-6">
+            <div className="flex items-center gap-2 text-[#4f8875]">
+              <Flame size={19} />
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em]">
+                RIWAYAT STREAK
+              </span>
+            </div>
+            <h2 className="mt-5 font-display text-[31px] leading-none text-[#31584f]">
+              {streak} hari
+            </h2>
+            <p className="mt-2 text-xs text-[#5f7c71]">
+              Konsistensi belajar terakhir
+            </p>
+            <div className="mt-7 grid grid-cols-7 gap-1.5">
+              {["S", "S", "R", "K", "J", "S", "M"].map((day, index) => (
+                <div
+                  key={`${day}-${index}`}
+                  className={`rounded-lg py-3 text-center text-[10px] font-bold ${index < completedTargets ? "bg-[#4f8875] text-white" : "bg-[#f4fbf7] text-[#8aa99e]"}`}
+                >
+                  {day}
+                  <span className="mt-1 block text-[8px] font-normal">
+                    {index < completedTargets ? "✓" : "·"}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-6 text-xs leading-relaxed text-[#5f7c71]">
+              Selesaikan satu sesi lagi untuk menjaga ritme dan mendekati target
+              7 hari.
+            </p>
+          </div>
+        </div>
+        <div className="mt-5 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-6 dark-card">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">
+                TARGET SELESAI
+              </p>
+              <h2 className="mt-2 font-display text-[27px]">
+                Progress minggu ini
+              </h2>
+            </div>
+            <span className="font-display text-3xl text-[#e97848]">
+              {Math.round((completedTargets / 7) * 100)}%
+            </span>
+          </div>
+          <div className="mt-5">
+            <ProgressBar value={(completedTargets / 7) * 100} />
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl bg-[#f4ede4] p-4">
+              <CheckCircle2 className="text-[#4f8875]" size={18} />
+              <p className="mt-3 text-xs font-bold text-[#6f6256]">
+                {completedTargets} target selesai
+              </p>
+              <p className="mt-1 text-[10px] text-[#9a8e81]">
+                dari 7 target mingguan
+              </p>
+            </div>
+            <div className="rounded-2xl bg-[#f4ede4] p-4">
+              <BookOpen className="text-[#a65332]" size={18} />
+              <p className="mt-3 text-xs font-bold text-[#6f6256]">
+                12 materi selesai
+              </p>
+              <p className="mt-1 text-[10px] text-[#9a8e81]">
+                teruskan progresmu
+              </p>
+            </div>
+            <div className="rounded-2xl bg-[#f4ede4] p-4">
+              <Zap className="text-[#bd8b2c]" size={18} />
+              <p className="mt-3 text-xs font-bold text-[#6f6256]">
+                4 lencana terbuka
+              </p>
+              <p className="mt-1 text-[10px] text-[#9a8e81]">
+                koleksi pencapaianmu
+              </p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
 
-  const renderProgress = () => <><div className="mb-8"><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">PERKEMBANGANMU</p><h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">Kamu terus <em className="font-serif font-normal text-[#b75c39]">bertumbuh.</em></h1><p className="mt-3 text-sm leading-relaxed text-[#8e8174]">Progres tersimpan di browser ini dan dapat kamu lanjutkan kapan saja.</p></div><div className="grid gap-4 md:grid-cols-3"><div className="rounded-[22px] bg-[#26323a] p-5 text-[#fffaf1]"><TrendingUpIcon /><p className="mt-7 font-display text-[39px] leading-none">{progress}%</p><p className="mt-2 text-xs text-[#b8c1bf]">Progres keseluruhan</p></div><div className="stat-card"><Trophy className="text-[#bd8b2c]" /><strong>86</strong><span>Rata-rata skor kuis</span></div><div className="rounded-[22px] bg-[#f6e6bd] p-5"><Flame className="text-[#cf6e3f]" /><p className="mt-7 font-display text-[39px] leading-none text-[#6f5526]">{streak}</p><p className="mt-2 text-xs text-[#9a7531]">Hari streak saat ini</p></div></div><div className="mt-6 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]"><div className="rounded-[22px] border border-[#e4dbd0] bg-[#fffdf9] p-6 dark-card"><SectionHeading eyebrow="TARGET BELAJAR" title="Minggu ini" /><div className="space-y-5">{materials.slice(0, 3).map((item) => <div key={item.id}><div className="mb-2 flex justify-between text-xs font-bold text-[#6f6256]"><span>{item.title}</span><span>{item.progress}%</span></div><ProgressBar value={item.progress} color={colorMap[item.color].bar} /></div>)}</div><Button className="mt-7 h-10 gap-2 rounded-xl bg-[#e97848] px-4 text-xs font-bold text-white hover:bg-[#c85d35]" onClick={() => markStudy()}><CheckCircle2 size={15} />Catat sesi belajar</Button></div><div className="rounded-[22px] bg-[#e7deea] p-6"><Award className="text-[#806388]" size={22} /><h3 className="mt-7 font-display text-[27px] leading-none text-[#604c65]">Lencana berikutnya</h3><p className="mt-3 text-sm leading-relaxed text-[#806d83]">Selesaikan 3 materi lagi untuk membuka lencana <strong>Tekun Belajar</strong>.</p><div className="mt-6"><ProgressBar value={80} color="bg-[#9b7892]" /></div><p className="mt-2 text-right text-[11px] font-bold text-[#806388]">12 / 15 materi</p></div></div></>;
+  const renderCalendar = () => {
+    const targetDays = [24, 26, 28];
+    const selected = Number(
+      localStorage.getItem("belajar_selected_day") || "24"
+    );
+    const setSelected = (day: number) => {
+      localStorage.setItem("belajar_selected_day", String(day));
+      setPage("Kalender");
+      toast.success(`Target tanggal ${day} Juni dipilih.`);
+    };
+    return (
+      <>
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">
+              TARGET DAN PENGINGAT
+            </p>
+            <h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">
+              Kalender belajar
+            </h1>
+            <p className="mt-3 text-sm leading-relaxed text-[#8e8174]">
+              Atur ritme yang realistis supaya daily streak tetap terjaga.
+            </p>
+          </div>
+          <Button
+            className="h-10 gap-2 rounded-xl bg-[#e97848] px-4 text-xs font-bold text-white hover:bg-[#c85d35]"
+            onClick={() => {
+              void enableNotifications();
+            }}
+          >
+            <Bell size={15} />
+            Aktifkan pengingat
+          </Button>
+        </div>
+        <div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">
+                  JADWAL BULANAN
+                </p>
+                <h2 className="mt-2 font-display text-[26px]">Juni 2024</h2>
+              </div>
+              <div className="flex gap-1">
+                <Button
+                  variant="outline"
+                  className="h-8 w-8 rounded-lg border-[#ded2c5] bg-transparent p-0 text-[#8e8174]"
+                >
+                  ‹
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-8 w-8 rounded-lg border-[#ded2c5] bg-transparent p-0 text-[#8e8174]"
+                >
+                  ›
+                </Button>
+              </div>
+            </div>
+            <div className="mt-6 grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-[#a49384]">
+              {["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"].map(day => (
+                <span key={day} className="py-2">
+                  {day}
+                </span>
+              ))}
+              {Array.from({ length: 6 }, (_, index) => (
+                <span key={`empty-${index}`} />
+              ))}
+              {Array.from({ length: 30 }, (_, index) => {
+                const day = index + 1;
+                const isTarget = targetDays.includes(day);
+                const isSelected = day === selected;
+                return (
+                  <button
+                    key={day}
+                    onClick={() => setSelected(day)}
+                    className={`relative flex h-10 items-center justify-center rounded-xl text-xs font-bold transition ${isSelected ? "bg-[#26323a] text-white" : isTarget ? "bg-[#f8e1d3] text-[#a65332] hover:bg-[#f3cfbc]" : "text-[#75695e] hover:bg-[#f4ede4]"}`}
+                  >
+                    {day}
+                    {isTarget && (
+                      <span className="absolute bottom-1 h-1 w-1 rounded-full bg-[#e97848]" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="mt-5 flex flex-wrap gap-4 text-[10px] font-bold text-[#9a8e81]">
+              <span className="flex items-center gap-1.5">
+                <i className="h-2 w-2 rounded-full bg-[#e97848]" />
+                Target belajar
+              </span>
+              <span className="flex items-center gap-1.5">
+                <i className="h-2 w-2 rounded-full bg-[#26323a]" />
+                Dipilih
+              </span>
+            </div>
+          </div>
+          <div className="space-y-5">
+            <div className="rounded-[24px] bg-[#dceae4] p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#f4fbf7] text-[#4f8875]">
+                  <Target size={21} />
+                </div>
+                <span className="rounded-full bg-[#f4fbf7] px-3 py-1.5 text-[10px] font-bold text-[#4f8875]">
+                  {onboarding.dailyTarget || 15} menit / hari
+                </span>
+              </div>
+              <h3 className="mt-7 font-display text-[28px] leading-none text-[#31584f]">
+                Target hari {selected}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-[#5f7c71]">
+                Fokus pada satu materi, lanjutkan dengan latihan singkat, lalu
+                catat progresnya.
+              </p>
+              <Button
+                className="mt-6 h-10 rounded-xl bg-[#31584f] px-4 text-xs font-bold text-white hover:bg-[#264941]"
+                onClick={() => {
+                  markStudy(true);
+                  toast.success("Target hari ini ditandai selesai.");
+                }}
+              >
+                Tandai selesai
+              </Button>
+            </div>
+            <div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-6 dark-card">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">
+                    PENGINGAT HARIAN
+                  </p>
+                  <h3 className="mt-2 font-display text-[24px]">
+                    Belajar setiap {onboarding.reminderTime || "19:00"}
+                  </h3>
+                </div>
+                <button
+                  aria-label="Aktifkan atau matikan pengingat"
+                  className={`relative h-7 w-12 rounded-full transition ${onboarding.reminderEnabled ? "bg-[#e97848]" : "bg-[#d9d0c6]"}`}
+                  onClick={() =>
+                    setOnboarding({
+                      ...onboarding,
+                      reminderEnabled: !onboarding.reminderEnabled,
+                    })
+                  }
+                >
+                  <span
+                    className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${onboarding.reminderEnabled ? "left-6" : "left-1"}`}
+                  />
+                </button>
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-[#8e8174]">
+                Pengingat tersimpan untuk perangkat ini. Waktu dapat diubah
+                kapan saja.
+              </p>
+              <Input
+                type="time"
+                value={onboarding.reminderTime || "19:00"}
+                onChange={event =>
+                  setOnboarding({
+                    ...onboarding,
+                    reminderTime: event.target.value,
+                  })
+                }
+                className="mt-4 h-10 rounded-xl border-[#e1d6ca] bg-[#fffaf1] text-xs"
+              />
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
 
-  const renderLeaderboard = () => { const rows = [{ name: user.name, score: 980, streak, badge: "Berproses" }]; return <><div className="mb-8"><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">MOTIVASI BERSAMA</p><h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">Leaderboard</h1><p className="mt-3 text-sm leading-relaxed text-[#8e8174]">Papan skor ini bersifat opsional—gunakan untuk menyemangati diri, bukan membandingkan diri.</p></div><div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5 dark-card"><div className="mb-4 flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">MINGGU INI</p><h2 className="mt-2 font-display text-[25px] text-[#26323a]">Teman belajar paling konsisten</h2></div><Trophy className="text-[#bd8b2c]" /></div><div className="overflow-hidden rounded-2xl border border-[#eee6dd]"><div className="grid grid-cols-[46px_1fr_100px_90px] bg-[#f5eee6] px-4 py-3 text-[10px] font-bold uppercase tracking-[0.12em] text-[#a49384]"><span>#</span><span>Pengguna</span><span>Streak</span><span>XP</span></div>{rows.map((row, index) => <div key={`${row.name}-${index}`} className={`grid grid-cols-[46px_1fr_100px_90px] items-center border-t border-[#eee6dd] px-4 py-4 ${row.name === user.name ? "bg-[#fff0e6]" : "bg-transparent"}`}><span className="font-display text-lg text-[#a49384]">{index + 1}</span><span className="flex items-center gap-3"><Avatar className="h-8 w-8"><AvatarFallback className={index === 0 ? "bg-[#f0d27e] text-[#80621e]" : "bg-[#e8ddd2] text-[#7d6b5a]"}>{row.name.slice(0, 2).toUpperCase()}</AvatarFallback></Avatar><span><strong className="block text-xs text-[#4b423a]">{row.name}{row.name === user.name && <span className="ml-2 rounded-full bg-[#e97848] px-2 py-0.5 text-[9px] text-white">Kamu</span>}</strong><small className="text-[10px] text-[#a19485]">{row.badge}</small></span></span><span className="flex items-center gap-1 text-xs font-bold text-[#d56537]"><Flame size={13} />{row.streak} hari</span><span className="text-xs font-bold text-[#6f6256]">{row.score} XP</span></div>)}</div></div></> };
+  const renderAiHistory = () => (
+    <>
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">
+            TERSIMPAN OTOMATIS
+          </p>
+          <h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">
+            Riwayat AI
+          </h1>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#8e8174]">
+            Buka kembali ringkasan, kuis kustom, dan jawaban yang pernah kamu
+            minta.
+          </p>
+        </div>
+        <Badge className="rounded-full bg-[#e3f0ea] px-3 py-2 text-[10px] font-bold text-[#456e63] hover:bg-[#e3f0ea]">
+          {aiHistory.length} tersimpan
+        </Badge>
+      </div>
+      {aiHistory.length === 0 ? (
+        <div className="rounded-[24px] border border-dashed border-[#d8cabe] bg-[#fffdf9] p-10 text-center dark-card">
+          <History className="mx-auto text-[#b89f8f]" size={32} />
+          <h2 className="mt-4 font-display text-[25px]">
+            Belum ada riwayat AI
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[#8e8174]">
+            Minta ringkasan atau kuis kustom dari Asisten Belajar. Hasilnya akan
+            tersimpan di sini.
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          {aiHistory.map(item => (
+            <article
+              key={item.id}
+              className="rounded-[22px] border border-[#e4dbd0] bg-[#fffdf9] p-5 shadow-[0_10px_30px_rgba(61,48,35,0.045)] dark-card"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <Badge
+                  className={`rounded-full px-3 py-1 text-[10px] font-bold hover:opacity-90 ${item.kind === "Ringkasan" ? "bg-[#f5e5d5] text-[#a65332]" : item.kind === "Kuis" ? "bg-[#e3f0ea] text-[#456e63]" : "bg-[#e7deea] text-[#604c65]"}`}
+                >
+                  {item.kind} · {item.topic}
+                </Badge>
+                <button
+                  aria-label="Hapus riwayat AI"
+                  className="text-[#b7a69a] hover:text-[#be4f3d]"
+                  onClick={() => removeAiHistory(item.id)}
+                >
+                  <X size={15} />
+                </button>
+              </div>
+              <h2 className="mt-4 font-display text-[21px] leading-tight text-[#26323a]">
+                {item.prompt}
+              </h2>
+              <p className="mt-3 max-h-28 overflow-hidden whitespace-pre-line text-xs leading-relaxed text-[#76695e]">
+                {item.answer}
+              </p>
+              <p className="mt-4 text-[10px] font-semibold text-[#b0a094]">
+                {new Date(item.createdAt).toLocaleString("id-ID", {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                })}
+              </p>
+            </article>
+          ))}
+        </div>
+      )}
+    </>
+  );
 
-  const renderCertificate = () => <><div className="mb-8"><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">PENCAPAIAN</p><h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">Sertifikat dan lencana</h1><p className="mt-3 text-sm leading-relaxed text-[#8e8174]">Rayakan proses belajarmu, bukan hanya hasil akhirnya.</p></div><div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]"><div className="relative overflow-hidden rounded-[24px] border-2 border-[#d6b66b] bg-[#fff7dd] p-7 text-center shadow-[0_10px_30px_rgba(120,91,34,0.08)]"><div className="absolute left-4 top-4 text-[#d6b66b]"><Sparkles size={20} /></div><div className="absolute right-4 top-4 text-[#d6b66b]"><Sparkles size={20} /></div><ShieldCheck className="mx-auto text-[#bd8b2c]" size={40} /><p className="mt-5 text-[10px] font-bold uppercase tracking-[0.28em] text-[#a47c2c]">SERTIFIKAT DIGITAL</p><h2 className="mt-4 font-display text-[32px] leading-none text-[#6f5526]">Fondasi SPLDV</h2><p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-[#9a7530]">Diberikan kepada</p><p className="mt-1 font-serif text-[25px] text-[#604b25]">{user.name}</p><p className="mx-auto mt-4 max-w-sm text-xs leading-relaxed text-[#a47c2c]">atas penyelesaian materi dan latihan dasar Persamaan Linear Dua Variabel.</p><div className="mt-6 flex items-center justify-center gap-5 text-[10px] font-bold text-[#a47c2c]"><span>Belajar Mandiri</span><span>·</span><span>2024</span></div><div className="mt-6 flex flex-wrap justify-center gap-2"><Button className="h-10 rounded-xl bg-[#a47c2c] px-5 text-xs font-bold text-[#fff7dd] hover:bg-[#85621f]" onClick={() => toast.success("Sertifikat siap diunduh pada versi berikutnya.")}><GraduationCap size={15} />Unduh sertifikat</Button><Button variant="outline" className="h-10 rounded-xl border-[#c9ad64] bg-transparent px-4 text-xs font-bold text-[#80621e]" onClick={() => { void shareAchievement("sertifikat"); }}><Share2 size={14} />Bagikan</Button></div></div><div className="rounded-[24px] bg-[#e7deea] p-7"><Award className="text-[#806388]" size={24} /><h2 className="mt-7 font-display text-[28px] leading-none text-[#604c65]">Koleksi lencana</h2><div className="mt-6 grid grid-cols-3 gap-3">{[{icon: Flame, label: "Mulai rutin", active: true}, {icon: BookOpen, label: "Pembaca", active: true}, {icon: Target, label: "Tekun", active: false}, {icon: Trophy, label: "Juara kuis", active: false}, {icon: Users, label: "Kolaboratif", active: false}, {icon: Sparkles, label: "Konsisten", active: false}].map(({ icon: Icon, label, active }) => <div key={label} className={`rounded-2xl p-3 text-center ${active ? "bg-[#f8f1fa] text-[#806388]" : "bg-[#d9cddc] text-[#a998ad]"}`}><Icon className="mx-auto" size={21} /><p className="mt-2 text-[10px] font-bold leading-tight">{label}</p></div>)}</div><div className="mt-6 flex flex-wrap gap-2"><Button variant="outline" className="h-9 rounded-xl border-[#bfaac4] bg-transparent text-xs font-bold text-[#604c65]" onClick={() => { void shareAchievement("lencana"); }}><Share2 size={14} />Bagikan lencana</Button><Button variant="outline" className="h-9 rounded-xl border-[#bfaac4] bg-transparent text-xs font-bold text-[#604c65]" onClick={() => { void shareAchievement("statistik"); }}><Share2 size={14} />Bagikan statistik</Button></div></div></div></>;
+  const renderProgress = () => (
+    <>
+      <div className="mb-8">
+        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">
+          PERKEMBANGANMU
+        </p>
+        <h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">
+          Kamu terus{" "}
+          <em className="font-serif font-normal text-[#b75c39]">bertumbuh.</em>
+        </h1>
+        <p className="mt-3 text-sm leading-relaxed text-[#8e8174]">
+          Progres tersimpan di browser ini dan dapat kamu lanjutkan kapan saja.
+        </p>
+      </div>
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-[22px] bg-[#26323a] p-5 text-[#fffaf1]">
+          <TrendingUpIcon />
+          <p className="mt-7 font-display text-[39px] leading-none">
+            {progress}%
+          </p>
+          <p className="mt-2 text-xs text-[#b8c1bf]">Progres keseluruhan</p>
+        </div>
+        <div className="stat-card">
+          <Trophy className="text-[#bd8b2c]" />
+          <strong>86</strong>
+          <span>Rata-rata skor kuis</span>
+        </div>
+        <div className="rounded-[22px] bg-[#f6e6bd] p-5">
+          <Flame className="text-[#cf6e3f]" />
+          <p className="mt-7 font-display text-[39px] leading-none text-[#6f5526]">
+            {streak}
+          </p>
+          <p className="mt-2 text-xs text-[#9a7531]">Hari streak saat ini</p>
+        </div>
+      </div>
+      <div className="mt-6 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="rounded-[22px] border border-[#e4dbd0] bg-[#fffdf9] p-6 dark-card">
+          <SectionHeading eyebrow="TARGET BELAJAR" title="Minggu ini" />
+          <div className="space-y-5">
+            {materials.slice(0, 3).map(item => (
+              <div key={item.id}>
+                <div className="mb-2 flex justify-between text-xs font-bold text-[#6f6256]">
+                  <span>{item.title}</span>
+                  <span>{item.progress}%</span>
+                </div>
+                <ProgressBar
+                  value={item.progress}
+                  color={colorMap[item.color].bar}
+                />
+              </div>
+            ))}
+          </div>
+          <Button
+            className="mt-7 h-10 gap-2 rounded-xl bg-[#e97848] px-4 text-xs font-bold text-white hover:bg-[#c85d35]"
+            onClick={() => markStudy()}
+          >
+            <CheckCircle2 size={15} />
+            Catat sesi belajar
+          </Button>
+        </div>
+        <div className="rounded-[22px] bg-[#e7deea] p-6">
+          <Award className="text-[#806388]" size={22} />
+          <h3 className="mt-7 font-display text-[27px] leading-none text-[#604c65]">
+            Lencana berikutnya
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed text-[#806d83]">
+            Selesaikan 3 materi lagi untuk membuka lencana{" "}
+            <strong>Tekun Belajar</strong>.
+          </p>
+          <div className="mt-6">
+            <ProgressBar value={80} color="bg-[#9b7892]" />
+          </div>
+          <p className="mt-2 text-right text-[11px] font-bold text-[#806388]">
+            12 / 15 materi
+          </p>
+        </div>
+      </div>
+    </>
+  );
 
-  const content = page === "Materi" ? <>{curriculumRoadmap}{videoCatalog}{expandedVideoCatalog}<section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">FILTER MATERI</p><h2 className="mt-2 font-display text-[25px] leading-none text-[#26323a]">Cari video dan buku berdasarkan kebutuhanmu.</h2><p className="mt-2 text-sm text-[#8e8174]">Gunakan kelas, mapel aktif, semester, dan bab untuk mempersempit daftar belajar.</p></div><div className="grid gap-2 sm:grid-cols-3"><select value={libraryGrade} onChange={(event) => setLibraryGrade(event.target.value)} className="h-10 rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e]"><option value="Semua kelas">Semua kelas</option><option value="TK">TK</option><option value="1 SD">Kelas 1 SD</option><option value="2 SD">Kelas 2 SD</option><option value="3 SD">Kelas 3 SD</option><option value="4 SD">Kelas 4 SD</option><option value="5 SD">Kelas 5 SD</option><option value="6 SD">Kelas 6 SD</option><option value="SMP">SMP</option><option value="SMA">SMA</option><option value="SMK">SMK</option></select><select value={librarySemester} onChange={(event) => setLibrarySemester(event.target.value)} className="h-10 rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e]"><option>Semua semester</option><option>Semester 1</option><option>Semester 2</option></select><select value={libraryChapter} onChange={(event) => setLibraryChapter(event.target.value)} className="h-10 rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e]"><option>Semua bab</option><option>Aljabar</option><option>Web Dasar</option><option>Algoritma</option><option>Persamaan</option><option>Literasi</option></select></div></div></section>{resourceShelf}{aiAskRoom}{learningToolkit}{generatedMaterials.length > 0 && <section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5"><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">HASIL AI DARI UPLOAD</p>{generatedMaterials.map((item) => <article key={item.name} className="mt-3 rounded-2xl bg-[#f4ede4] p-4"><p className="text-xs font-bold text-[#26323a]">{item.name}</p><p className="mt-2 text-xs text-[#76695e]"><strong>Ringkasan:</strong> {item.summary}</p><p className="mt-2 text-xs text-[#76695e]"><strong>Kuis:</strong> {item.quiz}</p></article>)}</section>}{renderLibrary()}</> : page === "Beranda" ? renderHome() : page === "Kuis" ? renderQuiz() : page === "Kalender" ? renderCalendar() : page === "AI Belajar" ? <AiLearningRoom subject={activeSubject} level={onboarding.className} userName={user.name} /> : page === "Pencapaian" ? achievementPages() : renderCertificate();
+  const renderLeaderboard = () => {
+    const rows = [{ name: user.name, score: 980, streak, badge: "Berproses" }];
+    return (
+      <>
+        <div className="mb-8">
+          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">
+            MOTIVASI BERSAMA
+          </p>
+          <h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">
+            Leaderboard
+          </h1>
+          <p className="mt-3 text-sm leading-relaxed text-[#8e8174]">
+            Papan skor ini bersifat opsional—gunakan untuk menyemangati diri,
+            bukan membandingkan diri.
+          </p>
+        </div>
+        <div className="rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5 dark-card">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#a49384]">
+                MINGGU INI
+              </p>
+              <h2 className="mt-2 font-display text-[25px] text-[#26323a]">
+                Teman belajar paling konsisten
+              </h2>
+            </div>
+            <Trophy className="text-[#bd8b2c]" />
+          </div>
+          <div className="overflow-hidden rounded-2xl border border-[#eee6dd]">
+            <div className="grid grid-cols-[46px_1fr_100px_90px] bg-[#f5eee6] px-4 py-3 text-[10px] font-bold uppercase tracking-[0.12em] text-[#a49384]">
+              <span>#</span>
+              <span>Pengguna</span>
+              <span>Streak</span>
+              <span>XP</span>
+            </div>
+            {rows.map((row, index) => (
+              <div
+                key={`${row.name}-${index}`}
+                className={`grid grid-cols-[46px_1fr_100px_90px] items-center border-t border-[#eee6dd] px-4 py-4 ${row.name === user.name ? "bg-[#fff0e6]" : "bg-transparent"}`}
+              >
+                <span className="font-display text-lg text-[#a49384]">
+                  {index + 1}
+                </span>
+                <span className="flex items-center gap-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback
+                      className={
+                        index === 0
+                          ? "bg-[#f0d27e] text-[#80621e]"
+                          : "bg-[#e8ddd2] text-[#7d6b5a]"
+                      }
+                    >
+                      {row.name.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span>
+                    <strong className="block text-xs text-[#4b423a]">
+                      {row.name}
+                      {row.name === user.name && (
+                        <span className="ml-2 rounded-full bg-[#e97848] px-2 py-0.5 text-[9px] text-white">
+                          Kamu
+                        </span>
+                      )}
+                    </strong>
+                    <small className="text-[10px] text-[#a19485]">
+                      {row.badge}
+                    </small>
+                  </span>
+                </span>
+                <span className="flex items-center gap-1 text-xs font-bold text-[#d56537]">
+                  <Flame size={13} />
+                  {row.streak} hari
+                </span>
+                <span className="text-xs font-bold text-[#6f6256]">
+                  {row.score} XP
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
+    );
+  };
 
-  return <div className={`study-app min-h-screen bg-[#f7f3ee] text-[#26323a] ${darkMode ? "night-mode" : ""}`}><aside className="fixed inset-y-0 left-0 z-40 hidden w-[244px] flex-col border-r border-[#e8e0d6] bg-[#fbf8f4] px-5 py-6 lg:flex dark-panel"><button className="flex items-center gap-2 px-2 text-left" onClick={() => go("Beranda")}><span className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-[#26323a] font-display text-[21px] font-bold text-[#f7d1b3]">b.</span><span className="font-display text-[22px] font-bold tracking-[-0.06em]">belajar<span className="text-[#e97848]">.</span></span></button><div className="mt-12"><p className="px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#b1a397]">Menu utama</p><nav className="mt-3 space-y-1">{navItems.map(({ label, icon: Icon }) => <button key={label} className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-bold transition ${page === label ? "bg-[#26323a] text-[#fffaf1]" : "text-[#8e8174] hover:bg-[#f2ebe3]"}`} onClick={() => go(label)}><Icon size={17} /><span>{label}</span>{label === "Leaderboard" && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#e97848]" />}</button>)}</nav></div><div className="mt-auto rounded-[18px] bg-[#f4e5d5] p-4"><div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#fff8ed] text-[#b75c39]"><Sparkles size={15} /></div><p className="mt-3 text-xs font-bold text-[#79533e]">Tips hari ini</p><p className="mt-1 text-[11px] leading-relaxed text-[#9a735c]">Belajar 15 menit lebih baik daripada menunggu waktu yang sempurna.</p></div><div className="mt-5 flex items-center gap-3 border-t border-[#e8e0d6] pt-5"><Avatar className="h-9 w-9"><AvatarFallback className="bg-[#e97848] text-xs font-bold text-white">{initials}</AvatarFallback></Avatar><div className="min-w-0 flex-1"><p className="truncate text-xs font-bold">{user.name}</p><p className="truncate text-[10px] text-[#a19485]">Profil pengguna</p></div><button aria-label="Pengaturan profil" className="text-[#a99b8e] hover:text-[#26323a]" onClick={() => { setEditName(user.name); setProfileCharacter(user.character || "female"); setProfileOpen(true); }}><MoreHorizontal size={17} /></button></div></aside><div className="lg:pl-[244px]"><header className="sticky top-0 z-30 border-b border-[#ebe3da]/90 bg-[#f7f3ee]/90 px-4 py-4 backdrop-blur-xl sm:px-7 lg:px-10 dark-header"><div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4"><div className="flex items-center gap-3"><button className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e3d9ce] bg-[#fffaf1] lg:hidden" onClick={() => setMobileOpen((open) => !open)} aria-label="Buka menu"><Menu size={18} /></button><div className="lg:hidden"><p className="font-display text-[21px] font-bold tracking-[-0.06em]">belajar<span className="text-[#e97848]">.</span></p></div><div className="hidden lg:block"><p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#a49384]">RUANG BELAJAR</p><p className="mt-1 font-display text-[20px] tracking-[-0.03em]">{page === "Beranda" ? `Selamat pagi, ${user.name}` : page}</p></div></div><div className="flex items-center gap-2 sm:gap-3"><div className="relative hidden w-[220px] md:block"><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#a99b8e]" /><Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Cari materi..." className="h-10 rounded-xl border-[#e3d9ce] bg-[#fffaf1] pl-9 text-xs" /></div><select aria-label="Ganti mata pelajaran aktif" value={activeSubject} onChange={(event) => { setActiveSubject(event.target.value); toast.success(`Mapel aktif diganti ke ${event.target.value}.`); }} className="hidden h-10 max-w-[150px] rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e] outline-none md:block">{selectableSubjects.map((subject) => <option key={subject} value={subject}>{subject}</option>)}</select><button aria-label="Ganti mode warna" className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e3d9ce] bg-[#fffaf1] text-[#8f8173] hover:text-[#26323a]" onClick={() => setDarkMode((value) => !value)}>{darkMode ? <Sun size={17} /> : <Moon size={17} />}</button><button aria-label="Notifikasi" className="relative hidden h-10 w-10 items-center justify-center rounded-xl border border-[#e3d9ce] bg-[#fffaf1] text-[#8f8173] sm:flex" onClick={() => toast.success("Tidak ada notifikasi baru")}><Bell size={17} /><span className="absolute right-2.5 top-2 h-1.5 w-1.5 rounded-full bg-[#e97848]" /></button><button className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e97848] text-xs font-bold text-white" onClick={() => { setEditName(user.name); setProfileOpen(true); }} aria-label="Buka profil">{initials}</button></div></div>{mobileOpen && <div className="mt-4 rounded-2xl border border-[#e3d9ce] bg-[#fffaf1] p-2 shadow-lg lg:hidden">{navItems.map(({ label, icon: Icon }) => <button key={label} className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-bold ${page === label ? "bg-[#26323a] text-white" : "text-[#8e8174]"}`} onClick={() => go(label)}><Icon size={16} />{label}</button>)}<button className="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-[#be4f3d]" onClick={logout}><LogOut size={16} />Keluar</button></div>}</header><main className="mx-auto max-w-[1400px] px-4 py-7 sm:px-7 lg:px-10 lg:py-9">{content}</main><footer className="mx-auto max-w-[1400px] px-4 pb-8 pt-2 text-[11px] text-[#ae9f91] sm:px-7 lg:px-10">Belajar Mandiri · ruang belajar personal yang bisa digunakan siapa saja.</footer></div><Dialog open={Boolean(selectedMaterial)} onOpenChange={(open) => !open && setSelectedMaterial(null)}><DialogContent className="max-w-lg rounded-[24px] border-[#e5dbd0] bg-[#fffdf9] text-[#26323a]"><DialogHeader><Badge className="w-fit rounded-full bg-[#f5e5d5] px-3 py-1 text-[10px] font-bold text-[#a65332] hover:bg-[#f5e5d5]">{selectedMaterial?.subject} · {selectedMaterial?.level}</Badge><DialogTitle className="mt-3 font-display text-[30px] leading-none tracking-[-0.045em]">{selectedMaterial?.title}</DialogTitle><DialogDescription className="pt-2 text-sm leading-relaxed text-[#8e8174]">{selectedMaterial?.description}</DialogDescription></DialogHeader><div className="mt-5 rounded-2xl bg-[#fffaf1] p-4"><div className="flex items-center gap-2 text-xs font-bold text-[#5f554b]"><CheckCircle2 size={15} className="text-[#5b927f]" />Rute belajar direkomendasikan</div><div className="mt-4 grid grid-cols-4 gap-1.5 text-center text-[10px] font-bold text-[#a29384]"><span className="rounded-lg bg-[#f2d1bd] px-1 py-2 text-[#a65332]">Ringkas</span><span className="rounded-lg bg-[#f2d1bd] px-1 py-2 text-[#a65332]">Pahami</span><span className="rounded-lg bg-[#e9e1d6] px-1 py-2">Latih</span><span className="rounded-lg bg-[#e9e1d6] px-1 py-2">Cek</span></div></div><DialogFooter className="mt-5 flex-row gap-2 sm:justify-start"><Button className="h-10 rounded-xl bg-[#26323a] px-5 text-xs font-bold text-white hover:bg-[#3b4b55]" onClick={() => { setSelectedMaterial(null); markStudy(); }}>Mulai materi <ChevronRight size={14} /></Button><Button variant="outline" className="h-10 rounded-xl border-[#ded2c5] bg-transparent text-xs font-bold text-[#76695e]" onClick={() => setSelectedMaterial(null)}>Nanti saja</Button></DialogFooter></DialogContent></Dialog><Dialog open={profileOpen} onOpenChange={setProfileOpen}><DialogContent className="max-w-md rounded-[24px] border-[#e5dbd0] bg-[#fffdf9] text-[#26323a]"><DialogHeader><DialogTitle className="font-display text-[28px] tracking-[-0.04em]">Profil pengguna</DialogTitle><DialogDescription className="text-sm text-[#8e8174]">Atur nama yang ingin ditampilkan di ruang belajar ini.</DialogDescription></DialogHeader><div className="mt-4"><label className="text-xs font-bold text-[#6f6256]">Nama tampilan</label><Input value={editName} onChange={(event) => setEditName(event.target.value)} className="mt-2 h-11 rounded-xl border-[#e1d6ca] bg-[#fffaf1]" /></div><div className="mt-4"><label className="text-xs font-bold text-[#6f6256]">Karakter profil</label><div className="mt-2 grid grid-cols-2 gap-2"><button type="button" className={`rounded-xl border p-3 text-left text-xs font-bold ${profileCharacter === "female" ? "border-[#e97848] bg-[#fff0e6] text-[#a65332]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e]"}`} onClick={() => setProfileCharacter("female")}>👩 Perempuan</button><button type="button" className={`rounded-xl border p-3 text-left text-xs font-bold ${profileCharacter === "male" ? "border-[#6e9e8e] bg-[#e3f0ea] text-[#456e63]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e]"}`} onClick={() => setProfileCharacter("male")}>👨 Laki-laki</button></div></div><div className="mt-4 rounded-xl bg-[#f4ede4] p-3 text-xs text-[#8e8174]"><p className="font-bold text-[#6f6256]">Email</p><p className="mt-1">{user.email}</p></div><DialogFooter className="mt-5 flex-row justify-between"><Button variant="ghost" className="h-10 gap-2 text-xs font-bold text-[#be4f3d] hover:bg-[#fff0ed]" onClick={logout}><LogOut size={14} />Keluar</Button><Button className="h-10 rounded-xl bg-[#26323a] px-5 text-xs font-bold text-white hover:bg-[#3b4b55]" onClick={saveProfile}><Check size={14} />Simpan profil</Button></DialogFooter></DialogContent></Dialog>{celebration && <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#26323a]/35 p-5 backdrop-blur-sm" onClick={() => setCelebration(null)}><div className="relative w-full max-w-sm overflow-hidden rounded-[28px] bg-[#fffdf9] p-8 text-center shadow-[0_25px_80px_rgba(38,50,58,0.3)]"><div className="pointer-events-none absolute inset-0">{Array.from({ length: 18 }, (_, index) => <span key={index} className="absolute h-2 w-2 rounded-sm" style={{ left: `${(index * 37) % 100}%`, top: `${(index * 23) % 85}%`, backgroundColor: ["#e97848", "#f0c965", "#6e9e8e", "#9b7892"][index % 4], transform: `rotate(${index * 23}deg)` }} />)}</div><div className="relative"><div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#f6e6bd] text-4xl">🎉</div><p className="mt-5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">Pencapaian baru</p><h2 className="mt-2 font-display text-[31px] leading-none text-[#26323a]">{celebration}</h2><p className="mt-3 text-sm text-[#8e8174]">Teruskan langkah kecilmu. Konsistensi hari ini berarti untuk tujuanmu.</p><Button className="mt-6 h-10 rounded-xl bg-[#26323a] px-6 text-xs font-bold text-white" onClick={() => setCelebration(null)}>Lanjut belajar</Button></div></div></div>}</div>;
+  const renderCertificate = () => (
+    <>
+      <div className="mb-8">
+        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a8e81]">
+          PENCAPAIAN
+        </p>
+        <h1 className="mt-2 font-display text-[42px] leading-none tracking-[-0.055em] text-[#26323a]">
+          Sertifikat dan lencana
+        </h1>
+        <p className="mt-3 text-sm leading-relaxed text-[#8e8174]">
+          Rayakan proses belajarmu, bukan hanya hasil akhirnya.
+        </p>
+      </div>
+      <div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="relative overflow-hidden rounded-[24px] border-2 border-[#d6b66b] bg-[#fff7dd] p-7 text-center shadow-[0_10px_30px_rgba(120,91,34,0.08)]">
+          <div className="absolute left-4 top-4 text-[#d6b66b]">
+            <Sparkles size={20} />
+          </div>
+          <div className="absolute right-4 top-4 text-[#d6b66b]">
+            <Sparkles size={20} />
+          </div>
+          <ShieldCheck className="mx-auto text-[#bd8b2c]" size={40} />
+          <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.28em] text-[#a47c2c]">
+            SERTIFIKAT DIGITAL
+          </p>
+          <h2 className="mt-4 font-display text-[32px] leading-none text-[#6f5526]">
+            Fondasi SPLDV
+          </h2>
+          <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-[#9a7530]">
+            Diberikan kepada
+          </p>
+          <p className="mt-1 font-serif text-[25px] text-[#604b25]">
+            {user.name}
+          </p>
+          <p className="mx-auto mt-4 max-w-sm text-xs leading-relaxed text-[#a47c2c]">
+            atas penyelesaian materi dan latihan dasar Persamaan Linear Dua
+            Variabel.
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-5 text-[10px] font-bold text-[#a47c2c]">
+            <span>Belajar Mandiri</span>
+            <span>·</span>
+            <span>2024</span>
+          </div>
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
+            <Button
+              className="h-10 rounded-xl bg-[#a47c2c] px-5 text-xs font-bold text-[#fff7dd] hover:bg-[#85621f]"
+              onClick={() =>
+                toast.success("Sertifikat siap diunduh pada versi berikutnya.")
+              }
+            >
+              <GraduationCap size={15} />
+              Unduh sertifikat
+            </Button>
+            <Button
+              variant="outline"
+              className="h-10 rounded-xl border-[#c9ad64] bg-transparent px-4 text-xs font-bold text-[#80621e]"
+              onClick={() => {
+                void shareAchievement("sertifikat");
+              }}
+            >
+              <Share2 size={14} />
+              Bagikan
+            </Button>
+          </div>
+        </div>
+        <div className="rounded-[24px] bg-[#e7deea] p-7">
+          <Award className="text-[#806388]" size={24} />
+          <h2 className="mt-7 font-display text-[28px] leading-none text-[#604c65]">
+            Koleksi lencana
+          </h2>
+          <div className="mt-6 grid grid-cols-3 gap-3">
+            {[
+              { icon: Flame, label: "Mulai rutin", active: true },
+              { icon: BookOpen, label: "Pembaca", active: true },
+              { icon: Target, label: "Tekun", active: false },
+              { icon: Trophy, label: "Juara kuis", active: false },
+              { icon: Users, label: "Kolaboratif", active: false },
+              { icon: Sparkles, label: "Konsisten", active: false },
+            ].map(({ icon: Icon, label, active }) => (
+              <div
+                key={label}
+                className={`rounded-2xl p-3 text-center ${active ? "bg-[#f8f1fa] text-[#806388]" : "bg-[#d9cddc] text-[#a998ad]"}`}
+              >
+                <Icon className="mx-auto" size={21} />
+                <p className="mt-2 text-[10px] font-bold leading-tight">
+                  {label}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              className="h-9 rounded-xl border-[#bfaac4] bg-transparent text-xs font-bold text-[#604c65]"
+              onClick={() => {
+                void shareAchievement("lencana");
+              }}
+            >
+              <Share2 size={14} />
+              Bagikan lencana
+            </Button>
+            <Button
+              variant="outline"
+              className="h-9 rounded-xl border-[#bfaac4] bg-transparent text-xs font-bold text-[#604c65]"
+              onClick={() => {
+                void shareAchievement("statistik");
+              }}
+            >
+              <Share2 size={14} />
+              Bagikan statistik
+            </Button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  const content =
+    page === "Materi" ? (
+      <>
+        {curriculumRoadmap}
+        {videoCatalog}
+        {expandedVideoCatalog}
+        <section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">
+                FILTER MATERI
+              </p>
+              <h2 className="mt-2 font-display text-[25px] leading-none text-[#26323a]">
+                Cari video dan buku berdasarkan kebutuhanmu.
+              </h2>
+              <p className="mt-2 text-sm text-[#8e8174]">
+                Gunakan kelas, mapel aktif, semester, dan bab untuk mempersempit
+                daftar belajar.
+              </p>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-3">
+              <select
+                value={libraryGrade}
+                onChange={event => setLibraryGrade(event.target.value)}
+                className="h-10 rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e]"
+              >
+                <option value="Semua kelas">Semua kelas</option>
+                <option value="TK">TK</option>
+                <option value="1 SD">Kelas 1 SD</option>
+                <option value="2 SD">Kelas 2 SD</option>
+                <option value="3 SD">Kelas 3 SD</option>
+                <option value="4 SD">Kelas 4 SD</option>
+                <option value="5 SD">Kelas 5 SD</option>
+                <option value="6 SD">Kelas 6 SD</option>
+                <option value="SMP">SMP</option>
+                <option value="10 SMA">Kelas 10 SMA</option>
+                <option value="11 SMA">Kelas 11 SMA</option>
+                <option value="12 SMA">Kelas 12 SMA</option>
+                <option value="10 SMK">Kelas 10 SMK</option>
+                <option value="11 SMK">Kelas 11 SMK</option>
+                <option value="12 SMK">Kelas 12 SMK</option>
+              </select>
+              <select
+                value={librarySemester}
+                onChange={event => setLibrarySemester(event.target.value)}
+                className="h-10 rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e]"
+              >
+                <option>Semua semester</option>
+                <option>Semester 1</option>
+                <option>Semester 2</option>
+              </select>
+              <select
+                value={libraryChapter}
+                onChange={event => setLibraryChapter(event.target.value)}
+                className="h-10 rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e]"
+              >
+                <option>Semua bab</option>
+                <option>Aljabar</option>
+                <option>Web Dasar</option>
+                <option>Algoritma</option>
+                <option>Persamaan</option>
+                <option>Literasi</option>
+              </select>
+            </div>
+          </div>
+        </section>
+        {resourceShelf}
+        {aiAskRoom}
+        {learningToolkit}
+        {generatedMaterials.length > 0 && (
+          <section className="mb-8 rounded-[24px] border border-[#e4dbd0] bg-[#fffdf9] p-5">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">
+              HASIL AI DARI UPLOAD
+            </p>
+            {generatedMaterials.map(item => (
+              <article
+                key={item.name}
+                className="mt-3 rounded-2xl bg-[#f4ede4] p-4"
+              >
+                <p className="text-xs font-bold text-[#26323a]">{item.name}</p>
+                <p className="mt-2 text-xs text-[#76695e]">
+                  <strong>Ringkasan:</strong> {item.summary}
+                </p>
+                <p className="mt-2 text-xs text-[#76695e]">
+                  <strong>Kuis:</strong> {item.quiz}
+                </p>
+              </article>
+            ))}
+          </section>
+        )}
+        {renderLibrary()}
+      </>
+    ) : page === "Beranda" ? (
+      renderHome()
+    ) : page === "Kuis" ? (
+      renderQuiz()
+    ) : page === "Kalender" ? (
+      renderCalendar()
+    ) : page === "AI Belajar" ? (
+      <AiLearningRoom
+        subject={activeSubject}
+        level={onboarding.className}
+        userName={user.name}
+      />
+    ) : page === "Pencapaian" ? (
+      achievementPages()
+    ) : (
+      renderCertificate()
+    );
+
+  return (
+    <div
+      className={`study-app min-h-screen bg-[#f7f3ee] text-[#26323a] ${darkMode ? "night-mode" : ""}`}
+    >
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[244px] flex-col border-r border-[#e8e0d6] bg-[#fbf8f4] px-5 py-6 lg:flex dark-panel">
+        <button
+          className="flex items-center gap-2 px-2 text-left"
+          onClick={() => go("Beranda")}
+        >
+          <span className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-[#26323a] font-display text-[21px] font-bold text-[#f7d1b3]">
+            b.
+          </span>
+          <span className="font-display text-[22px] font-bold tracking-[-0.06em]">
+            belajar<span className="text-[#e97848]">.</span>
+          </span>
+        </button>
+        <div className="mt-12">
+          <p className="px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#b1a397]">
+            Menu utama
+          </p>
+          <nav className="mt-3 space-y-1">
+            {navItems.map(({ label, icon: Icon }) => (
+              <button
+                key={label}
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-bold transition ${page === label ? "bg-[#26323a] text-[#fffaf1]" : "text-[#8e8174] hover:bg-[#f2ebe3]"}`}
+                onClick={() => go(label)}
+              >
+                <Icon size={17} />
+                <span>{label}</span>
+                {label === "Leaderboard" && (
+                  <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#e97848]" />
+                )}
+              </button>
+            ))}
+          </nav>
+        </div>
+        <div className="mt-auto rounded-[18px] bg-[#f4e5d5] p-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#fff8ed] text-[#b75c39]">
+            <Sparkles size={15} />
+          </div>
+          <p className="mt-3 text-xs font-bold text-[#79533e]">Tips hari ini</p>
+          <p className="mt-1 text-[11px] leading-relaxed text-[#9a735c]">
+            Belajar 15 menit lebih baik daripada menunggu waktu yang sempurna.
+          </p>
+        </div>
+        <div className="mt-5 flex items-center gap-3 border-t border-[#e8e0d6] pt-5">
+          <Avatar className="h-9 w-9">
+            <AvatarFallback className="bg-[#e97848] text-xs font-bold text-white">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs font-bold">{user.name}</p>
+            <p className="truncate text-[10px] text-[#a19485]">
+              Profil pengguna
+            </p>
+          </div>
+          <button
+            aria-label="Pengaturan profil"
+            className="text-[#a99b8e] hover:text-[#26323a]"
+            onClick={() => {
+              setEditName(user.name);
+              setProfileCharacter(user.character || "female");
+              setProfileOpen(true);
+            }}
+          >
+            <MoreHorizontal size={17} />
+          </button>
+        </div>
+      </aside>
+      <div className="lg:pl-[244px]">
+        <header className="sticky top-0 z-30 border-b border-[#ebe3da]/90 bg-[#f7f3ee]/90 px-4 py-4 backdrop-blur-xl sm:px-7 lg:px-10 dark-header">
+          <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <button
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e3d9ce] bg-[#fffaf1] lg:hidden"
+                onClick={() => setMobileOpen(open => !open)}
+                aria-label="Buka menu"
+              >
+                <Menu size={18} />
+              </button>
+              <div className="lg:hidden">
+                <p className="font-display text-[21px] font-bold tracking-[-0.06em]">
+                  belajar<span className="text-[#e97848]">.</span>
+                </p>
+              </div>
+              <div className="hidden lg:block">
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#a49384]">
+                  RUANG BELAJAR
+                </p>
+                <p className="mt-1 font-display text-[20px] tracking-[-0.03em]">
+                  {page === "Beranda" ? `Selamat pagi, ${user.name}` : page}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="relative hidden w-[220px] md:block">
+                <Search
+                  size={15}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#a99b8e]"
+                />
+                <Input
+                  value={search}
+                  onChange={event => setSearch(event.target.value)}
+                  placeholder="Cari materi..."
+                  className="h-10 rounded-xl border-[#e3d9ce] bg-[#fffaf1] pl-9 text-xs"
+                />
+              </div>
+              <select
+                aria-label="Ganti mata pelajaran aktif"
+                value={activeSubject}
+                onChange={event => {
+                  setActiveSubject(event.target.value);
+                  toast.success(
+                    `Mapel aktif diganti ke ${event.target.value}.`
+                  );
+                }}
+                className="hidden h-10 max-w-[150px] rounded-xl border border-[#e3d9ce] bg-[#fffaf1] px-3 text-xs font-bold text-[#76695e] outline-none md:block"
+              >
+                {selectableSubjects.map(subject => (
+                  <option key={subject} value={subject}>
+                    {subject}
+                  </option>
+                ))}
+              </select>
+              <button
+                aria-label="Ganti mode warna"
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e3d9ce] bg-[#fffaf1] text-[#8f8173] hover:text-[#26323a]"
+                onClick={() => setDarkMode(value => !value)}
+              >
+                {darkMode ? <Sun size={17} /> : <Moon size={17} />}
+              </button>
+              <button
+                aria-label="Notifikasi"
+                className="relative hidden h-10 w-10 items-center justify-center rounded-xl border border-[#e3d9ce] bg-[#fffaf1] text-[#8f8173] sm:flex"
+                onClick={() => toast.success("Tidak ada notifikasi baru")}
+              >
+                <Bell size={17} />
+                <span className="absolute right-2.5 top-2 h-1.5 w-1.5 rounded-full bg-[#e97848]" />
+              </button>
+              <button
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e97848] text-xs font-bold text-white"
+                onClick={() => {
+                  setEditName(user.name);
+                  setProfileOpen(true);
+                }}
+                aria-label="Buka profil"
+              >
+                {initials}
+              </button>
+            </div>
+          </div>
+          {mobileOpen && (
+            <div className="mt-4 rounded-2xl border border-[#e3d9ce] bg-[#fffaf1] p-2 shadow-lg lg:hidden">
+              {navItems.map(({ label, icon: Icon }) => (
+                <button
+                  key={label}
+                  className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-bold ${page === label ? "bg-[#26323a] text-white" : "text-[#8e8174]"}`}
+                  onClick={() => go(label)}
+                >
+                  <Icon size={16} />
+                  {label}
+                </button>
+              ))}
+              <button
+                className="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-bold text-[#be4f3d]"
+                onClick={logout}
+              >
+                <LogOut size={16} />
+                Keluar
+              </button>
+            </div>
+          )}
+        </header>
+        <main className="mx-auto max-w-[1400px] px-4 py-7 sm:px-7 lg:px-10 lg:py-9">
+          {content}
+        </main>
+        <footer className="mx-auto max-w-[1400px] px-4 pb-8 pt-2 text-[11px] text-[#ae9f91] sm:px-7 lg:px-10">
+          Belajar Mandiri · ruang belajar personal yang bisa digunakan siapa
+          saja.
+        </footer>
+      </div>
+      <Dialog
+        open={Boolean(selectedMaterial)}
+        onOpenChange={open => !open && setSelectedMaterial(null)}
+      >
+        <DialogContent className="max-w-lg rounded-[24px] border-[#e5dbd0] bg-[#fffdf9] text-[#26323a]">
+          <DialogHeader>
+            <Badge className="w-fit rounded-full bg-[#f5e5d5] px-3 py-1 text-[10px] font-bold text-[#a65332] hover:bg-[#f5e5d5]">
+              {selectedMaterial?.subject} · {selectedMaterial?.level}
+            </Badge>
+            <DialogTitle className="mt-3 font-display text-[30px] leading-none tracking-[-0.045em]">
+              {selectedMaterial?.title}
+            </DialogTitle>
+            <DialogDescription className="pt-2 text-sm leading-relaxed text-[#8e8174]">
+              {selectedMaterial?.description}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-5 rounded-2xl bg-[#fffaf1] p-4">
+            <div className="flex items-center gap-2 text-xs font-bold text-[#5f554b]">
+              <CheckCircle2 size={15} className="text-[#5b927f]" />
+              Rute belajar direkomendasikan
+            </div>
+            <div className="mt-4 grid grid-cols-4 gap-1.5 text-center text-[10px] font-bold text-[#a29384]">
+              <span className="rounded-lg bg-[#f2d1bd] px-1 py-2 text-[#a65332]">
+                Ringkas
+              </span>
+              <span className="rounded-lg bg-[#f2d1bd] px-1 py-2 text-[#a65332]">
+                Pahami
+              </span>
+              <span className="rounded-lg bg-[#e9e1d6] px-1 py-2">Latih</span>
+              <span className="rounded-lg bg-[#e9e1d6] px-1 py-2">Cek</span>
+            </div>
+          </div>
+          <DialogFooter className="mt-5 flex-row gap-2 sm:justify-start">
+            <Button
+              className="h-10 rounded-xl bg-[#26323a] px-5 text-xs font-bold text-white hover:bg-[#3b4b55]"
+              onClick={() => {
+                setSelectedMaterial(null);
+                markStudy();
+              }}
+            >
+              Mulai materi <ChevronRight size={14} />
+            </Button>
+            <Button
+              variant="outline"
+              className="h-10 rounded-xl border-[#ded2c5] bg-transparent text-xs font-bold text-[#76695e]"
+              onClick={() => setSelectedMaterial(null)}
+            >
+              Nanti saja
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
+        <DialogContent className="max-w-md rounded-[24px] border-[#e5dbd0] bg-[#fffdf9] text-[#26323a]">
+          <DialogHeader>
+            <DialogTitle className="font-display text-[28px] tracking-[-0.04em]">
+              Profil pengguna
+            </DialogTitle>
+            <DialogDescription className="text-sm text-[#8e8174]">
+              Atur nama yang ingin ditampilkan di ruang belajar ini.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4">
+            <label className="text-xs font-bold text-[#6f6256]">
+              Nama tampilan
+            </label>
+            <Input
+              value={editName}
+              onChange={event => setEditName(event.target.value)}
+              className="mt-2 h-11 rounded-xl border-[#e1d6ca] bg-[#fffaf1]"
+            />
+          </div>
+          <div className="mt-4">
+            <label className="text-xs font-bold text-[#6f6256]">
+              Karakter profil
+            </label>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                className={`rounded-xl border p-3 text-left text-xs font-bold ${profileCharacter === "female" ? "border-[#e97848] bg-[#fff0e6] text-[#a65332]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e]"}`}
+                onClick={() => setProfileCharacter("female")}
+              >
+                👩 Perempuan
+              </button>
+              <button
+                type="button"
+                className={`rounded-xl border p-3 text-left text-xs font-bold ${profileCharacter === "male" ? "border-[#6e9e8e] bg-[#e3f0ea] text-[#456e63]" : "border-[#e1d6ca] bg-[#fffaf1] text-[#76695e]"}`}
+                onClick={() => setProfileCharacter("male")}
+              >
+                👨 Laki-laki
+              </button>
+            </div>
+          </div>
+          <div className="mt-4 rounded-xl bg-[#f4ede4] p-3 text-xs text-[#8e8174]">
+            <p className="font-bold text-[#6f6256]">Email</p>
+            <p className="mt-1">{user.email}</p>
+          </div>
+          <DialogFooter className="mt-5 flex-row justify-between">
+            <Button
+              variant="ghost"
+              className="h-10 gap-2 text-xs font-bold text-[#be4f3d] hover:bg-[#fff0ed]"
+              onClick={logout}
+            >
+              <LogOut size={14} />
+              Keluar
+            </Button>
+            <Button
+              className="h-10 rounded-xl bg-[#26323a] px-5 text-xs font-bold text-white hover:bg-[#3b4b55]"
+              onClick={saveProfile}
+            >
+              <Check size={14} />
+              Simpan profil
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {celebration && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-[#26323a]/35 p-5 backdrop-blur-sm"
+          onClick={() => setCelebration(null)}
+        >
+          <div className="relative w-full max-w-sm overflow-hidden rounded-[28px] bg-[#fffdf9] p-8 text-center shadow-[0_25px_80px_rgba(38,50,58,0.3)]">
+            <div className="pointer-events-none absolute inset-0">
+              {Array.from({ length: 18 }, (_, index) => (
+                <span
+                  key={index}
+                  className="absolute h-2 w-2 rounded-sm"
+                  style={{
+                    left: `${(index * 37) % 100}%`,
+                    top: `${(index * 23) % 85}%`,
+                    backgroundColor: [
+                      "#e97848",
+                      "#f0c965",
+                      "#6e9e8e",
+                      "#9b7892",
+                    ][index % 4],
+                    transform: `rotate(${index * 23}deg)`,
+                  }}
+                />
+              ))}
+            </div>
+            <div className="relative">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#f6e6bd] text-4xl">
+                🎉
+              </div>
+              <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#a65332]">
+                Pencapaian baru
+              </p>
+              <h2 className="mt-2 font-display text-[31px] leading-none text-[#26323a]">
+                {celebration}
+              </h2>
+              <p className="mt-3 text-sm text-[#8e8174]">
+                Teruskan langkah kecilmu. Konsistensi hari ini berarti untuk
+                tujuanmu.
+              </p>
+              <Button
+                className="mt-6 h-10 rounded-xl bg-[#26323a] px-6 text-xs font-bold text-white"
+                onClick={() => setCelebration(null)}
+              >
+                Lanjut belajar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
-function TrendingUpIcon() { return <div className="flex items-center justify-between"><BarChart3 className="text-[#f6cfad]" size={19} /><span className="text-xs font-bold text-[#bdcbc8]">+18% bulan ini</span></div>; }
+function TrendingUpIcon() {
+  return (
+    <div className="flex items-center justify-between">
+      <BarChart3 className="text-[#f6cfad]" size={19} />
+      <span className="text-xs font-bold text-[#bdcbc8]">+18% bulan ini</span>
+    </div>
+  );
+}
